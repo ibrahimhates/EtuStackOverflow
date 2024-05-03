@@ -8,6 +8,7 @@
     <title>@ViewData["Title"] - EtuStackOverflow</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/EtuStackOverflow.styles.css" asp-append-version="true" />
+    <link href="~/css/style.css" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -46,7 +47,11 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/plugins/common/common.min.js"></script>
+    <script src="~/js/custom.min.js"></script>
+    <script src="~/js/settings.js"></script>
+    <script src="~/js/gleek.js"></script>
+    <script src="~/js/styleSwitcher.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

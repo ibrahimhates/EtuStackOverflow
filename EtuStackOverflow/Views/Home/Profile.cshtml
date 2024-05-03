@@ -1,10 +1,136 @@
-﻿@model int
-
-<div class="text-center">
-    @if (Model == 5)
-    {
-        <button class="display-4">Profile Edit</button>
-    }
-    <h1 class="display-4">Profile</h1>
+﻿<div id="preloader">
+    <div class="loader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+        </svg>
+    </div>
 </div>
+<!--*******************
+    Preloader end
+********************-->
+<!-- row -->
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-4 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="media align-items-center mb-4">
+                        <img class="mr-3" src="~/images/avatar/11.png" width="80" height="80" alt="">
+                        <div class="media-body">
+                            <h3 class="mb-0">Burakhan Wolf</h3>
+                            <p class="text-muted mb-0">EveryWhere</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col">
+                            <div class="card card-profile text-center">
+                                <span class="mb-1 text-primary"></i></span>
+                                <h3 class="mb-0">263</h3>
+                                <p class="text-muted px-4">Your comments</p>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card card-profile text-center">
+                                <span class="mb-1 text-warning"></i></span>
+                                <h3 class="mb-0">263</h3>
+                                <p class="text-muted">interactions</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <div class="card">
+                <div class="card-body">
+                    <form action="#" class="form-profile">
+                        <div class="form-group">
+                            <textarea class="form-control" name="textarea" id="textarea" cols="30" rows="2" placeholder="Post a new message"></textarea>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-end">
+                            <button class="btn btn-primary px-3 ml-4">Send</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="media media-reply">
+                        <img class="mr-3 circle-rounded" src="~/images/avatar/2.jpg" width="50" height="50" alt="Generic placeholder image">
+                        <div class="media-body">
+                            <div class="d-sm-flex justify-content-between mb-2">
+                                <h5 class="mb-sm-0">FurqanSama <small class="text-muted ml-3">about 3 days ago</small></h5>
+                                <div class="media-reply__link">
+                                    <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-up"></i></button>
+                                    <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-down"></i></button>
+                                    <button class="btn btn-transparent text-dark font-weight-bold p-0 ml-2">Report</button>
+                                </div>
+                            </div>
+                            <h7>
+                                You are very clever
+                            </h7>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="media media-reply">
+                        <img class="mr-3 circle-rounded" src="~/images/avatar/2.jpg" width="50" height="50" alt="Generic placeholder image">
+                        <div class="media-body">
+                            <div class="d-sm-flex justify-content-between mb-2">
+                                <h5 class="mb-sm-0">Ibrahim Halil Fire <small class="text-muted ml-3">about 3 days ago</small></h5>
+                                <div class="media-reply__link">
+                                    <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-up"></i></button>
+                                    <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-down"></i></button>
+                                    <button class="btn btn-transparent text-dark font-weight-bold p-0 ml-2">Report</button>
+                                </div>
+                            </div>
+                            <h7>This profile is awesome</h7>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="media media-reply">
+                        <img class="mr-3 circle-rounded" src="~/images/avatar/2.jpg" width="50" height="50" alt="Generic placeholder image">
+                        <div class="media-body">
+                            <div class="d-sm-flex justify-content-between mb-2">
+                                <h5 class="mb-sm-0">TheAmazingOmer28 <small class="text-muted ml-3">about 3 days ago</small></h5>
+                                <div class="media-reply__link">
+                                    <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-up"></i></button>
+                                    <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-down"></i></button>
+                                    <button class="btn btn-transparent text-dark font-weight-bold p-0 ml-2">Report</button>
+                                </div>
+                            </div>
+                            <h7>
+                                Thanks for your help
+                            </h7>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #/ container -->
+        </div>
+<!--**********************************
+    Content body end
+***********************************-->
+    </div>
+<!--**********************************
+    Main wrapper end
+***********************************-->
+<!--**********************************
+    Scripts
+***********************************-->
