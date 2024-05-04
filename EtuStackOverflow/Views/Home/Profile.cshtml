@@ -2,7 +2,7 @@
     ViewData["Title"] = "Profile";
 }
 
-<div class="row ps-5">
+<div class="row ps-5" id="profileList" ref="profileList">
     <div class="col-md-3">
         <div class="card">
             <div class="card-body">
@@ -49,18 +49,18 @@
                 </h3>
             </div>
             <div class="card-body">
-                <div class="media media-reply pb-2">
+                <div class="media media-reply pb-2" v-for="(question, index) in profileQuestionData" :key="index">
                     <div class="media-body">
                         <div class="d-sm-flex justify-content-between mb-2">
                             <div>
-                                <h5 class="mb-sm-0"> Donanim</h5>
+                                <h5 class="mb-sm-0"> {{question.title}}</h5>
                             </div>
                             <div>
-                                <small class="text-muted ml-3"> 3 days ago</small>
+                                <small class="text-muted ml-3"> {{ timeSince(question.createdDate) }}</small>
                             </div>
                         </div>
                         <h7>
-                            Anakart uzerine ekran kartini...
+                            {{question.description}}
                         </h7>
                     </div>
                 </div>
@@ -75,34 +75,24 @@
                 </h3>
             </div>
             <div class="card-body">
-                <div class="media media-reply">
-                    <img class="mr-3 circle-rounded" src="~/images/avatar/2.jpg" width="50" height="50" alt="Generic placeholder image">
+                <div class="media media-reply pb-2" v-for="(comment, index) in profileInteractionData" :key="index">
+                    <img class="mr-3 circle-rounded" v-bind:src="'/images/avatar/' + comment.profilePicture + '.jpg'" width="50" height="50" alt="Generic placeholder image">
                     <div class="media-body">
                         <div class="d-sm-flex justify-content-between mb-2">
-                            <h5 class="mb-sm-0">Ibrahim Halil Fire <small class="text-muted ml-3">about 3 days ago</small></h5>
-                            <div class="media-reply__link">
-                                <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-up"></i></button>
-                                <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-down"></i></button>
+                            <h5 class="mb-sm-0">{{comment.name}} <small class="text-muted ml-3">{{timeSince(comment.createdDate)}}</small></h5>
+                            <div class="media-reply__link d-flex justify-content-around">
+                                <div class="d-flex justify-content-center align-items-center mr-3">
+                                    <span>{{comment.likeCount}}</span>
+                                    <button class="btn btn-transparent p-0 ml-1" v-on:click="like(index)"><i class="fa fa-thumbs-up"></i></button>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mr-3">
+                                    <span>{{comment.disLikeCount}}</span>
+                                    <button class="btn btn-transparent p-0 ml-1" v-on:click="disLike(index)"><i class="fa fa-thumbs-down"></i></button>
+                                </div>
                                 <button class="btn btn-transparent text-dark font-weight-bold p-0 ml-2">Report</button>
                             </div>
                         </div>
-                        <h7>This profile is awesome</h7>
-                    </div>
-                </div>
-                <div class="media media-reply">
-                    <img class="mr-3 circle-rounded" src="~/images/avatar/2.jpg" width="50" height="50" alt="Generic placeholder image">
-                    <div class="media-body">
-                        <div class="d-sm-flex justify-content-between mb-2">
-                            <h5 class="mb-sm-0">TheAmazingOmer28 <small class="text-muted ml-3">about 3 days ago</small></h5>
-                            <div class="media-reply__link">
-                                <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-up"></i></button>
-                                <button class="btn btn-transparent p-0 mr-3"><i class="fa fa-thumbs-down"></i></button>
-                                <button class="btn btn-transparent text-dark font-weight-bold p-0 ml-2">Report</button>
-                            </div>
-                        </div>
-                        <h7>
-                            Thanks for your help
-                        </h7>
+                        <h7>{{comment.content}}</h7>
                     </div>
                 </div>
             </div>

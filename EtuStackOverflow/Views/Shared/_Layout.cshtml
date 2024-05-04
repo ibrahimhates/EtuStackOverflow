@@ -17,6 +17,9 @@
     <!-- Chartist -->
     <link rel="stylesheet" href="~/plugins/chartist/css/chartist.min.css">
     <link rel="stylesheet" href="~/plugins/chartist-plugin-tooltips/css/chartist-plugin-tooltip.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
 </head>
 <body>
     <header class="pb-5">
@@ -43,12 +46,21 @@
                     </ul>
                 </div>
                 <div class="d-flex justify-content-end">
-                    <a type="button" class="btn btn-primary me-1" href="/auth/login">Login</a>
-                    <a type="button" class="btn btn-primary" href="/auth/register" >Register</a>
+                    <a type="button" class="btn btn-outline-dark me-1" href="/auth/login">Login</a>
+                    <a type="button" class="btn btn-outline-dark" href="/auth/register" >Register</a>
                 </div>
             </div>
         </nav>
     </header>
+
+    <div id="preloader">
+        <div class="loader">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+            </svg>
+        </div>
+    </div>
+
     <div class="main-content pt-5 pb-4">
         <div class="container-fluid">
             @RenderBody()
@@ -68,7 +80,7 @@
     <script src="~/js/settings.js"></script>
     <script src="~/js/gleek.js"></script>
     <script src="~/js/styleSwitcher.js"></script>
-    <script src="~/./js/dashboard/dashboard-2.js"></script>
+    <script src="~/js/profile/profiledatalist.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
