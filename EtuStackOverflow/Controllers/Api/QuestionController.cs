@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace EtuStackOverflow.Controllers
+namespace EtuStackOverflow.Controllers.Api
 {
-    public class QuestionController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class QuestionController : ControllerBase
     {
+        [HttpGet("questions/{id:int}")]
         public IActionResult AllQuestionForUser(int id)
         {
             var questionList = new List<Question>();
@@ -24,6 +27,7 @@ namespace EtuStackOverflow.Controllers
             return Ok(questionList);
         }
 
+        [HttpGet("interactions/{id:int}")]
         public IActionResult AllInteractionForUser(int id)
         {
             Random random = new Random();
@@ -46,10 +50,6 @@ namespace EtuStackOverflow.Controllers
             return Ok(commentList);
         }
 
-        public IActionResult AllQuestion()
-        {
-            return Ok();
-        }
     }
 
     public class Question

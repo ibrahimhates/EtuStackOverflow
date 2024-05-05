@@ -18,14 +18,14 @@ var app = new Vue({
     },
     methods: {
         getDataForQuestion(userId) {
-            axios.get(`/Question/AllQuestionForUser/${userId}`)
+            axios.get(`/api/Question/questions/${userId}`)
                 .then(response => {
                     this.profileQuestionData = response.data;
                 })
                 .catch(error => console.error('Birseyler ters gitti '));
         },
         getDataForInteraction(userId) {
-            axios.get(`/Question/AllInteractionForUser/${userId}`)
+            axios.get(`/api/Question/interactions/${userId}`)
                 .then(response => {
                     this.profileInteractionData = response.data;
                 })

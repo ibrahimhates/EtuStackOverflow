@@ -1,130 +1,57 @@
-﻿<div class="row">
-
-	<div class="col-md-12">
-		<div class="row">
-			<div class="col-md-2">
-				<div class="input-group mb-5 icons">
-					<input type="search" class="form-control rounded " placeholder="Search Dashboard" aria-label="Search Dashboard">
-					<div class="input-group-append">
-						<span class="input-group-text bg-transparent border-0 fs-4" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>
-					</div>
-					<div class="drop-down   d-md-none">
-						<form action="#">
-							<input type="text" class="form-control" placeholder="Search">
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6">
-		<div class="card shadow">
-			<div class="card-body">
-				<div class="text-center">
-					<img src="~/images/founderavatar/furkancohnoglu.jpeg" width="125" height="125" class="rounded-circle" alt="">
-					<h5 class="mt-3 mb-1">Muhammed Furkan Çonoğlu</h5>
-					<p class="m-0">Football Player</p>
-					<!-- <a href="javascript:void()" class="btn btn-sm btn-warning">Send Message</a> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6">
-		<div class="card shadow">
-			<div class="card-body">
-				<div class="text-center">
-					<img src="~/images/founderavatar/ibrahimhates.png" width="125" height="125" class="rounded-circle" alt="">
-					<h5 class="mt-3 mb-1">İbrahim Halil Fire</h5>
-					<p class="m-0">Backend's Father</p>
-					<!-- <a href="javascript:void()" class="btn btn-sm btn-warning">Send Message</a> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6">
-		<div class="card shadow">
-			<div class="card-body">
-				<div class="text-center">
-					<img src="~/images/founderavatar/burakhankurt.jpeg" width="125" height="125" class="rounded-circle" alt="">
-					<h5 class="mt-3 mb-1">Burakhan Kurt</h5>
-					<p class="m-0">Fullstack Html Developer</p>
-					<!-- <a href="javascript:void()" class="btn btn-sm btn-warning">Send Message</a> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6">
-		<div class="card shadow">
-			<div class="card-body">
-				<div class="text-center">
-					<img src="~/images/founderavatar/omerfaruksoydemir.jpeg" width="125" height="125" class="rounded-circle" alt="">
-					<h5 class="mt-3 mb-1">Ömer Faruk Soydemir</h5>
-					<p class="m-0">Sleep Man</p>
-					<!-- <a href="javascript:void()" class="btn btn-sm btn-warning">Send Message</a> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6">
-		<div class="card shadow">
-			<div class="card-body">
-				<div class="text-center">
-					<img src="~/images/founderavatar/furkancohnoglu.jpeg" width="125" height="125" class="rounded-circle" alt="">
-					<h5 class="mt-3 mb-1">Muhammed Furkan Çonoğlu</h5>
-					<p class="m-0">Football Player</p>
-					<!-- <a href="javascript:void()" class="btn btn-sm btn-warning">Send Message</a> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6">
-		<div class="card shadow">
-			<div class="card-body">
-				<div class="text-center">
-					<img src="~/images/founderavatar/furkancohnoglu.jpeg" width="125" height="125" class="rounded-circle" alt="">
-					<h5 class="mt-3 mb-1">Muhammed Furkan Çonoğlu</h5>
-					<p class="m-0">Football Player</p>
-					<!-- <a href="javascript:void()" class="btn btn-sm btn-warning">Send Message</a> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6">
-		<div class="card shadow">
-			<div class="card-body">
-				<div class="text-center">
-					<img src="~/images/founderavatar/furkancohnoglu.jpeg" width="125" height="125" class="rounded-circle" alt="">
-					<h5 class="mt-3 mb-1">Muhammed Furkan Çonoğlu</h5>
-					<p class="m-0">Football Player</p>
-					<!-- <a href="javascript:void()" class="btn btn-sm btn-warning">Send Message</a> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-12">
-		<div class="bootstrap-pagination">
-			<nav>
-				<ul class="pagination justify-content-center">
-					<li class="page-item">
-						<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span></a>
-					</li>
-					<li class="page-item">
-						<a class="page-link" href="#">1</a>
-					</li>
-					<li class="page-item">
-						<a class="page-link" href="#">2</a>
-					</li>
-					<li class="page-item">
-						<a class="page-link" href="#">3</a>
-					</li>
-					<li class="page-item">
-						<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span></a>
-					</li>
-				</ul>
-			</nav>
-		</div>
+﻿<div class="row" id="userPageList" ref="userPageList">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="input-group mb-5 icons">
+                    <input type="text"
+                           class="form-control rounded"
+                           placeholder="Search Dashboard"
+                           aria-label="Search Dashboard"
+                           v-model="searchTerm"
+                    >
+                    <div class="input-group-append" v-on:click="getAllUserWithSearchTerm()">
+                        <span class="input-group-text bg-transparent border-0 fs-4" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6" v-for="(user) in userData" :key="user.id">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="text-center">
+                    <img v-bind:src="'/images/founderavatar/' + user.profilePicture" width="125" height="125" class="rounded-circle" alt="">
+                    <h5 class="mt-3 mb-1">{{user.name}}</h5>
+                    <p class="m-0">{{user.userName}}</p>
+                    <!-- <a href="javascript:void()" class="btn btn-sm btn-warning">Send Message</a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="bootstrap-pagination">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span></a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
 
-	</div>
+    </div>
 
 </div>
