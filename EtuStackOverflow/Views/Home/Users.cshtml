@@ -7,10 +7,11 @@
                            class="form-control rounded"
                            placeholder="Search Dashboard"
                            aria-label="Search Dashboard"
-                           v-model="searchTerm"
-                    >
-                    <div class="input-group-append" v-on:click="getAllUserWithSearchTerm()">
-                        <span class="input-group-text bg-transparent border-0 fs-4" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>
+                           v-model="searchTerm">
+                    <div class="input-group-append">
+                        <a class="btn-light rounded" v-on:click="getAllUserWithSearchTerm()">
+                            <span class="input-group-text bg-transparent border-0 fs-4" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>
+                        </a>
                     </div>
                 </div>
             </div>
