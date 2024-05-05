@@ -4,7 +4,9 @@ var app = new Vue({
     el: '#profileList',
     data: {
         profileQuestionData: [],
-        profileInteractionData:[]
+        profileInteractionData: [],
+        islike: false,
+        isDisLike: false
     },
     mounted() {
         this.$nextTick(() => {
@@ -30,12 +32,34 @@ var app = new Vue({
                 .catch(error => console.error('Birseyler ters gitti '));
         },
         disLike(id) {
-            console.log("Id:", id)
-            this.profileInteractionData[id].disLikeCount++;
+
+            if (this.isDisLike) {
+                this.profileInteractionData[id].disLikeCount--;
+
+            } else {
+                this.profileInteractionData[id].disLikeCount++;
+
+                if (this.isLike) {
+                    this.profileInteractionData[id].likeCount--;
+                    this.isLike = false;
+                }
+            }
+            this.isDisLike = !this.isDisLike;
         },
         like(id) {
-            console.log("Id:", id)
-            this.profileInteractionData[id].likeCount++;
+
+            if (this.isLike) {
+                this.profileInteractionData[id].likeCount--;
+
+            } else {
+                this.profileInteractionData[id].likeCount++;
+
+                if (this.isDisLike) {
+                    this.profileInteractionData[id].disLikeCount--;
+                    this.isDisLike = false;
+                }
+            }
+            this.isLike = !this.isLike;
         },
         timeSince(date) {
             return moment(date).fromNow();

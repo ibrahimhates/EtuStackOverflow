@@ -11392,21 +11392,22 @@ table.dataTable thead .sorting::after {
   border-radius: 3px; }
 
 .card-widget__title {
+  font-weight: bold;
   font-size: 24px;
-  color: #fff;
+  color: #000;
   margin-bottom: 5px; }
 
 .card-widget__subtitle {
   font-weight: normal;
   font-size: 14px;
-  color: #fff;
+  color: #000;
   margin-bottom: 0; }
 
 .card-widget__icon {
   margin-right: 20px; }
   .card-widget__icon i, .card-widget__icon span {
     font-size: 35px;
-    color: #fff; }
+    color: #212529; }
 
 @-webkit-keyframes mymove {
   0% {
