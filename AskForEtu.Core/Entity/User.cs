@@ -6,7 +6,9 @@ namespace AskForEtu.Core.Entity
 {
     public class User : EntityBase, IEntity<int>
     {
+       
         public int Id { get; set; }
+        public long CommentId { get; set; }
         public byte FacultyId { get; set; }
         public byte MajorId { get; set; }
         public byte Grade { get; set; }
@@ -22,5 +24,7 @@ namespace AskForEtu.Core.Entity
         public bool VerifyEmail { get; set; }
         public string VerifyEmailToken { get; set; }
         public ICollection<Question> Questions { get; set; }
+        public ICollection<Like> Likes { get; set; }
+        public ICollection<DisLike> DisLikes { get; set; }
     }
 }
