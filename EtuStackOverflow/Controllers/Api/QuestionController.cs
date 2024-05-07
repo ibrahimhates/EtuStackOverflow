@@ -56,7 +56,7 @@ namespace EtuStackOverflow.Controllers.Api
             return Ok(questionList);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("one/{id:int}")]
         public IActionResult GetOneQuestion([FromRoute(Name = "id")]int id)
         {
             string dosyaYolu = "veriler.txt";

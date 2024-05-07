@@ -16,25 +16,25 @@ namespace EtuStackOverflow.Controllers
             return View();
         }
 
-        [Route("/questions")]
+        //[Route("/questions")]
         public IActionResult Questions()
         {
             return View();
         }
 
-        [Route("/questions/{questionId:int}")]
+        //[Route("/questions/{questionId:int}")]
         public IActionResult QuestionDetail()
         {
             return View();
         }
 
-        [Route("/users")]
+        //[Route("/users")]
         public IActionResult Users()
         {
             return View();
         }
 
-        [Route("/profile")]
+        //[Route("/profile")]
         public IActionResult Profile(int id)
         {
             return View(id);
