@@ -21,7 +21,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
 </head>
-<body>
+<body >
     <img src="~/images/bg/bg-logo.png" class="position-absolute top-50 start-50 translate-middle">
     <header class="pb-5">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow fixed-top shadow-lg">
@@ -96,7 +96,7 @@
     </div>
 
     <div class="main-content pt-5 min-vh-100">
-        <div class="container-fluid">
+        <div class="container-fluid" id="baseBody">
             @RenderBody()
         </div>
     </div>
@@ -114,9 +114,7 @@
     <script src="~/js/settings.js"></script>
     <script src="~/js/gleek.js"></script>
     <script src="~/js/styleSwitcher.js"></script>
-    <script src="~/js/profile/profiledatalist.js"></script>
-    <script src="~/js/user/userscript.js"></script>
-    <script src="~/js/user/deneme.js"></script>
+    <script src="~/js/script.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

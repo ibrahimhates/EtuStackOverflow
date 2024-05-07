@@ -1,4 +1,4 @@
-﻿<div class="row d-flex justify-content-center" id="questionPage" ref="questionPage">
+﻿<div class="row d-flex justify-content-center" ref="questionPage">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
@@ -139,8 +139,7 @@
             <div class="card-body">
                 <div class="media media-reply pb-2" v-for="(ques) in allQuestionList" :key="ques.id">
                     <div class="media-body">
-                        <a :href="'/questions/'+ ques.id" v-on:click="getOneQuestion(ques.id)">
-
+                        <a :href="'/questions/'+ ques.id" v-on:click="changeLocationRoute(ques.id)">
                             <div class="d-sm-flex justify-content-between mb-2">
                                 <div>
                                     <h5 class="mb-sm-0 fw-bold">{{ques.title}}</h5>

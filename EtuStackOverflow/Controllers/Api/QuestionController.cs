@@ -4,10 +4,10 @@ using System.Text.Json;
 namespace EtuStackOverflow.Controllers.Api
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]s")]
     public class QuestionController : ControllerBase
     {
-        [HttpGet("questions/{id:int}")]
+        [HttpGet("allForUser/{id:int}")]
         public IActionResult AllQuestionForUser(int id)
         {
             var questionList = new List<Question>();
