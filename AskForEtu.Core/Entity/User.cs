@@ -1,12 +1,9 @@
-﻿
-using AskForEtu.Core.Entity.Base;
-using System.ComponentModel.DataAnnotations;
+﻿using AskForEtu.Core.Entity.Base;
 
 namespace AskForEtu.Core.Entity
 {
     public class User : EntityBase, IEntity<int>
     {
-       
         public int Id { get; set; }
         public long CommentId { get; set; }
         public byte FacultyId { get; set; }
@@ -23,6 +20,8 @@ namespace AskForEtu.Core.Entity
         public string Email { get; set; }
         public bool VerifyEmail { get; set; }
         public string VerifyEmailToken { get; set; }
+        public Faculty Faculty { get; set; }
+        public Major Major { get; set; }
         public ICollection<Question> Questions { get; set; }
         public ICollection<Like> Likes { get; set; }
         public ICollection<DisLike> DisLikes { get; set; }

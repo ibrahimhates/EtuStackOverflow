@@ -1,9 +1,19 @@
 
+using AskForEtu.Repository.Context;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
+
+// dbContext yapilandirilmasi connection string baglantisi
+builder.Services.AddDbContext<AskForEtuDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("mySql");
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
 
 var app = builder.Build();
 

@@ -1,9 +1,4 @@
 ﻿using AskForEtu.Core.Entity.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AskForEtu.Core.Entity
 {
