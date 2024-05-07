@@ -40,21 +40,21 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Questions">
+                            <a class="nav-link" href="/questions">
                                 <span class="fs-5 fw-bold">
                                     Questions
                                 </span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Users">
+                            <a class="nav-link" href="/users">
                                 <span class="fs-5 fw-bold">
                                     Users
                                 </span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Profile">
+                            <a class="nav-link" href="/profile">
                                 <span class="fs-5 fw-bold">
                                     Profile
                                 </span>
@@ -75,7 +75,7 @@
                     <div class="dropdown-content-body">
                     <ul>
                     <li>
-                    <a href="/Home/Profile"><i class="icon-user"></i> <span>Profile</span></a>
+                    <a href="/profile"><i class="icon-user"></i> <span>Profile</span></a>
                     </li>
                     <li><a href="/Auth/Login"><i class="icon-key"></i> <span>Logout</span></a></li>
                     </ul>
@@ -116,6 +116,7 @@
     <script src="~/js/styleSwitcher.js"></script>
     <script src="~/js/profile/profiledatalist.js"></script>
     <script src="~/js/user/userscript.js"></script>
+    <script src="~/js/user/deneme.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

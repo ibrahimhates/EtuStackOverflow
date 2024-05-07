@@ -1,0 +1,3 @@
+{"title": "Günlük Toplantý Notlarý","content": "Bugünkü toplantýda projenin ilerleyiþi hakkýnda tartýþmalar yapýldý. Öncelikli hedefler belirlendi ve takvim planlandý.","id": 98765,"username": "johndoe","pp": "ibrahimhates.png"}
+{"title": "Yemek Tarifi","content": "Bugün akþam yemeði için tavuklu pilav yapýlacak. Malzemeler: tavuk göðsü, pirinç, sebze, baharatlar.","id": 12345,"username": "janedoe","pp": "burakhankurt.jpeg"}
+{"title": "Kitap Önerisi","content": "Son okuduðum kitap harikaydý! Herkese tavsiye ederim.","id": 54321,"username": "booklover","pp": "furkanconoglu.jpeg"}

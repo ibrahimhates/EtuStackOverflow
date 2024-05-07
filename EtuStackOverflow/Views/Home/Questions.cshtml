@@ -1,4 +1,4 @@
-﻿<div class="row d-flex justify-content-center">
+﻿<div class="row d-flex justify-content-center" id="questionPage" ref="questionPage">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
@@ -137,110 +137,31 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="media media-reply pb-2">
+                <div class="media media-reply pb-2" v-for="(ques) in allQuestionList" :key="ques.id">
                     <div class="media-body">
-                        <div type="button">
+                        <a :href="'/questions/'+ ques.id" v-on:click="getOneQuestion(ques.id)">
+
                             <div class="d-sm-flex justify-content-between mb-2">
                                 <div>
-                                    <h5 class="mb-sm-0 fw-bold"> Bilgisayar mavi ekran hatasi</h5>
+                                    <h5 class="mb-sm-0 fw-bold">{{ques.title}}</h5>
                                 </div>
                                 <div>
                                     <small class="text-muted ml-3">12 min ago</small>
                                 </div>
                             </div>
                             <h7>
-                                Tam bilgisayar boot olurken aciliyor gibi oluyor ama sonra bir bip sesi...
+                                {{ques.content}}
                             </h7>
-                        </div>
+                        </a>
+
                         <div class="d-flex justify-content-end">
                             <div class="d-flex align-items-center">
                                 <div class="">
-                                    <img src="~/images/avatar/1.png" class="rounded-circle" width="30" height="30">
+                                    <img v-bind:src="'/images/founderavatar/' + ques.pp" class="rounded-circle" width="30" height="30">
                                 </div>
                                 <div class="ml-2">
-                                    <a class="text-dark" href="/home/users">
-                                        <span>ibrahimhates</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> 
-                <div class="media media-reply pb-2">
-                    <div class="media-body">
-                        <div class="d-sm-flex justify-content-between mb-2">
-                            <div>
-                                <h5 class="mb-sm-0 fw-bold"> Bilgisayar mavi ekran hatasi</h5>
-                            </div>
-                            <div>
-                                <small class="text-muted ml-3">12 min ago</small>
-                            </div>
-                        </div>
-                        <h7>
-                            Tam bilgisayar boot olurken aciliyor gibi oluyor ama sonra bir bip sesi...
-                        </h7>
-                        <div class="d-flex justify-content-end">
-                            <div class="d-flex align-items-center">
-                                <div class="">
-                                    <img src="~/images/avatar/1.png" class="rounded-circle" width="30" height="30">
-                                </div>
-                                <div class="ml-2">
-                                    <a class="text-dark" href="/home/users">
-                                        <span>ibrahimhates</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> 
-                <div class="media media-reply pb-2">
-                    <div class="media-body">
-                        <div class="d-sm-flex justify-content-between mb-2">
-                            <div>
-                                <h5 class="mb-sm-0 fw-bold"> Bilgisayar mavi ekran hatasi</h5>
-                            </div>
-                            <div>
-                                <small class="text-muted ml-3">12 min ago</small>
-                            </div>
-                        </div>
-                        <h7>
-                            Tam bilgisayar boot olurken aciliyor gibi oluyor ama sonra bir bip sesi...
-                        </h7>
-                        <div class="d-flex justify-content-end">
-                            <div class="d-flex align-items-center">
-                                <div class="">
-                                    <img src="~/images/avatar/1.png" class="rounded-circle" width="30" height="30">
-                                </div>
-                                <div class="ml-2">
-                                    <a class="text-dark" href="/home/users">
-                                        <span>ibrahimhates</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> 
-                <div class="media media-reply pb-2">
-                    <div class="media-body">
-                        <div class="d-sm-flex justify-content-between mb-2">
-                            <div>
-                                <h5 class="mb-sm-0 fw-bold"> Bilgisayar mavi ekran hatasi</h5>
-                            </div>
-                            <div>
-                                <small class="text-muted ml-3">12 min ago</small>
-                            </div>
-                        </div>
-                        <h7>
-                            Tam bilgisayar boot olurken aciliyor gibi oluyor ama sonra bir bip sesi...
-                        </h7>
-                        <div class="d-flex justify-content-end">
-                            <div class="d-flex align-items-center">
-                                <div class="">
-                                    <img src="~/images/avatar/1.png" class="rounded-circle" width="30" height="30">
-                                </div>
-                                <div class="ml-2">
-                                    <a class="text-dark" href="/home/users">
-                                        <span>ibrahimhates</span>
+                                    <a class="text-dark" href="/users">
+                                        <span>{{ques.username}}</span>
                                     </a>
                                 </div>
                             </div>

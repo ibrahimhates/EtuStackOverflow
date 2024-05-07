@@ -1,7 +1,4 @@
-using EtuStackOverflow.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Diagnostics;
 
 namespace EtuStackOverflow.Controllers
 {
@@ -13,23 +10,31 @@ namespace EtuStackOverflow.Controllers
         {
             _logger = logger;
         }
-
+        
         public IActionResult Index()
         {
             return View();
         }
 
+        [Route("/questions")]
         public IActionResult Questions()
         {
             return View();
         }
 
-        public IActionResult Users()
+        [Route("/questions/{questionId:int}")]
+        public IActionResult QuestionDetail()
         {
-
             return View();
         }
 
+        [Route("/users")]
+        public IActionResult Users()
+        {
+            return View();
+        }
+
+        [Route("/profile")]
         public IActionResult Profile(int id)
         {
             return View(id);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace EtuStackOverflow.Controllers.Api
 {
@@ -25,6 +26,64 @@ namespace EtuStackOverflow.Controllers.Api
             }
 
             return Ok(questionList);
+        }
+
+        [HttpGet]
+        public IActionResult AllQuestions()
+        {
+            var questionList = new List<QuestionAll>();
+
+            string dosyaYolu = "veriler.txt";
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(dosyaYolu))
+                {
+                    string satir;
+                    // Dosyanın sonuna kadar oku
+                    while ((satir = sr.ReadLine()) != null)
+                    {
+                        var question = JsonSerializer.Deserialize<QuestionAll>(satir);
+                        questionList.Add(question);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+            }
+
+            return Ok(questionList);
+        }
+
+        [HttpGet("{id:int}")]
+        public IActionResult GetOneQuestion([FromRoute(Name = "id")]int id)
+        {
+            string dosyaYolu = "veriler.txt";
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(dosyaYolu))
+                {
+                    string satir;
+                    // Dosyanın sonuna kadar oku
+                    while ((satir = sr.ReadLine()) != null)
+                    {
+                        var ques = JsonSerializer.Deserialize<QuestionAll>(satir);
+                       
+                        if(ques != null && ques.id == id)
+                        {
+                            return Ok(ques);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+            }
+
+            return NotFound("Question Bulunamadi");
         }
 
         [HttpGet("interactions/{id:int}")]
@@ -58,6 +117,15 @@ namespace EtuStackOverflow.Controllers.Api
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime CreatedDate { get; set; }
+    }
+    
+    public class QuestionAll
+    {
+        public int id { get; set; }
+        public string title { get; set; }
+        public string content { get; set; }
+        public string username { get; set; }
+        public string pp { get; set; }
     }
 
     public class Comment
