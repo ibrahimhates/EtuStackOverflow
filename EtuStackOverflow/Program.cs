@@ -1,11 +1,5 @@
 using AskForEtu.Core.Map;
-using AskForEtu.Core.Services;
-using AskForEtu.Core.Services.Repo;
-using AskForEtu.Repository.Context;
-using AskForEtu.Repository.Services;
-using AskForEtu.Repository.Services.Repo;
-using AskForEtu.Repository.UnitofWork;
-using Microsoft.EntityFrameworkCore;
+using EtuStackOverflow.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,20 +8,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
 
 // dbContext yapilandirilmasi connection string baglantisi
-builder.Services.AddDbContext<AskForEtuDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("mySql");
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-});
+builder.Services.ConfigureDbContext(builder.Configuration);
 
 // Automapper added
 builder.Services.AddAutoMapper(typeof(Mapper));
 
-//Service Kayitlari
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+//Kayitlari
+builder.Services.ConfigureServices();
+builder.Services.ConfigureRepos();
+builder.Services.ConfigureResponsibility();
 
 var app = builder.Build();
 

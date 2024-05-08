@@ -9,7 +9,7 @@ namespace AskForEtu.Core.Dto.Request
             byte MajorId,
             byte Grade,
             string UserName,
-            string PasswordHash,
+            string Password,
             string PasswordAgain
         );
 }

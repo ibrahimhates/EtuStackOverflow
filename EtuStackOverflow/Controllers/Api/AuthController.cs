@@ -1,13 +1,13 @@
 ﻿using AskForEtu.Core.Dto.Request;
 using AskForEtu.Core.Services;
-using Microsoft.AspNetCore.Http;
+using EtuStackOverflow.Controllers.Api.CustomControllerBase;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EtuStackOverflow.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : CustomController
     {
         private readonly IAuthService _authService;
 
@@ -19,16 +19,23 @@ namespace EtuStackOverflow.Controllers.Api
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            try
+            var result = await _authService.RegisterAsync(registerDto);
+
+            return CreateActionResultInstance(result);
+        }
+
+        [Route("/api/verify-email")]
+        [HttpGet]
+        public async Task<IActionResult> VerifyEmail([FromQuery]string t)
+        {
+            var result = await _authService.VerifyEmailRequestAsync(t);
+
+            if (result.IsSuccessful)
             {
-                await _authService.Register(registerDto);
-            }
-            catch (Exception)
-            {
-                return BadRequest("Serverda hata olustu");
+                return Redirect("/email/islem_basarili");
             }
 
-            return Ok("Basarili");
+            return Redirect("/email/islem_basarisiz");
         }
     }
 }
