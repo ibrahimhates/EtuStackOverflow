@@ -25,5 +25,6 @@ namespace AskForEtu.Core.Entity
         public ICollection<Question> Questions { get; set; }
         public ICollection<Like> Likes { get; set; }
         public ICollection<DisLike> DisLikes { get; set; }
+        public Token Token { get; set; }
     }
 }

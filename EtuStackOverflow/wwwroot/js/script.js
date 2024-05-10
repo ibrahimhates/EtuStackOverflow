@@ -1,6 +1,7 @@
+import { getCookie,deleteCookie } from './cookieManager.js';
 
-var app = new Vue({
-    el: "#baseBody ",
+new Vue({
+    el: "#baseBody",
     data: {
         allQuestionList: [],
         question: {},
@@ -9,7 +10,9 @@ var app = new Vue({
         profileQuestionData: [],
         profileInteractionData: [],
         islike: false,
-        isDisLike: false
+        isDisLike: false,
+        token: "",
+        isLogin: false
     },
     mounted() {
         this.$nextTick(() => {
@@ -26,6 +29,15 @@ var app = new Vue({
                 this.getDataForQuestion(1);
                 this.getDataForInteraction(1);
             }
+            if (this.$refs.homePage) {
+                const tokenCookieValue = getCookie("accessToken")
+                if (tokenCookieValue === "") {
+                    this.isLogin = false;
+                } else {
+                    this.token = tokenCookieValue;
+                    this.isLogin = true;
+                }
+            }
         });
     },
     methods: {
@@ -39,7 +51,7 @@ var app = new Vue({
         getOneQuestion() {
             var routeId = window.location.href.split('/').reverse()[0];
 
-            axios.get(`/api/questions/${routeId}`)
+            axios.get(`/api/questions/one/${routeId}`)
                 .then(response => {
                     this.question = response.data;
                 })
@@ -115,6 +127,14 @@ var app = new Vue({
         },
         timeSince(date) {
             return moment(date).fromNow();
+        },
+        logout() {
+            axios.post(`/api/auth/logout`, null, { headers: { 'Authorization': 'Bearer ' + this.token } })
+                .then(() => {
+                    deleteCookie("accessToken");
+                    window.location.reload();
+                })
+                .catch(error => console.error('Birseyler ters gitti '));
         }
     }
 })

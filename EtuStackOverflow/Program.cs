@@ -3,6 +3,8 @@ using EtuStackOverflow.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.JwtSettings.json");
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
@@ -13,10 +15,13 @@ builder.Services.ConfigureDbContext(builder.Configuration);
 // Automapper added
 builder.Services.AddAutoMapper(typeof(Mapper));
 
-//Kayitlari
+//Service Repo Bagimlilik Kayitlari
 builder.Services.ConfigureServices();
 builder.Services.ConfigureRepos();
 builder.Services.ConfigureResponsibility();
+
+//JwtBearer configurasyonlari
+builder.Services.ConfigureJwtBearer(builder.Configuration);
 
 var app = builder.Build();
 

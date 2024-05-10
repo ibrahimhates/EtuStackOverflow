@@ -1,5 +1,6 @@
+import { getCookie } from '../cookieManager.js';
 
-var regApp = new Vue({
+new Vue({
     el: "#registerPage",
     data: {
         register: {
@@ -18,10 +19,20 @@ var regApp = new Vue({
         isLoading: false,
         isError: false,
         isSuccess: false,
-        errorMessage:"",
+        errorMessage: "",
     },
     mounted() {
-        this.getAllFaculty()
+        this.$nextTick(() => {
+            if (this.$refs.registerPage) {
+                const tokenCookieValue = getCookie("accessToken")
+
+                if (tokenCookieValue !== "") {
+                    window.location.pathname = "/";
+                } else {
+                    this.getAllFaculty()
+                }
+            }
+        });
     },
     methods: {
         getAllFaculty() {

@@ -12,6 +12,7 @@ namespace AskForEtu.Repository.Context
             : base(options){}
 
         DbSet<User> Users { get; set; }
+        DbSet<Token> Tokens { get; set; }
         DbSet<Question> Questions { get; set; }
         DbSet<Comment> Comments{ get; set; }
         DbSet<DisLike> DisLikes  { get; set; }

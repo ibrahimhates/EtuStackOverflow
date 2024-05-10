@@ -3,7 +3,6 @@ using AskForEtu.Core.Services.Repo;
 using AskForEtu.Repository.Context;
 using AskForEtu.Repository.Services.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
 
 namespace AskForEtu.Repository.Services.Repo
 {
@@ -16,7 +15,9 @@ namespace AskForEtu.Repository.Services.Repo
         public async Task<User> GetByUserOrEmailAsync(string userNameOrEmail, bool trackChanges = false)
         {
             var user = await GetByCondition(x => x.Email == userNameOrEmail
-            || x.UserName == userNameOrEmail, trackChanges).FirstOrDefaultAsync();
+            || x.UserName == userNameOrEmail, trackChanges)
+                .Include(x => x.Token)
+                .FirstOrDefaultAsync();
 
             return user;
         }
@@ -27,26 +28,6 @@ namespace AskForEtu.Repository.Services.Repo
                 ,trackChanges).FirstOrDefaultAsync();
 
             return user;
-        }
-
-        public string GenerateEmailVerifyToken()
-        {
-            var tokenBytes = GenerateRandomBytes(32);
-
-            string token = Convert.ToBase64String(tokenBytes);
-
-            return token;
-        }
-
-        private byte[] GenerateRandomBytes(int lenght)
-        {
-            var randomBytes = new byte[lenght];
-
-            using var rndg = RandomNumberGenerator.Create();
-
-            rndg.GetBytes(randomBytes);
-
-            return randomBytes;
         }
     }
 }

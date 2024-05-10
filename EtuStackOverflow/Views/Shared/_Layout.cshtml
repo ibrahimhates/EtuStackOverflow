@@ -20,84 +20,89 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+
 </head>
-<body >
+<body>
     <img src="~/images/bg/bg-logo.png" class="position-absolute top-50 start-50 translate-middle">
-    <header class="pb-5">
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow fixed-top shadow-lg">
-            <div class="container-fluid">
-                <a href="/Home">
-                    <img class="mr-3" src="~/images/logo.jpg" width="50" height="50" alt="Logo">
-                </a>
-                <span class="navbar-brand fw-bold">EtuStackOverflow</span>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-center align-items-center">
-                    <ul class="navbar-nav gap-5">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                                <span class="fs-5 fw-bold">
-                                    Home
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/questions">
-                                <span class="fs-5 fw-bold">
-                                    Questions
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/users">
-                                <span class="fs-5 fw-bold">
-                                    Users
-                                </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/profile">
-                                <span class="fs-5 fw-bold">
-                                    Profile
-                                </span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="d-flex justify-content-end align-items-center">
-                    <a type="button" class="btn btn-outline-dark me-1" href="/auth/login">Login</a>
-                    <a type="button" class="btn btn-outline-dark" href="/auth/register">Register</a>
+    <div id="baseBody" ref="homePage">
+        <header class="pb-5">
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow fixed-top shadow-lg">
+                <div class="container-fluid">
+                    <a href="/Home">
+                        <img class="mr-3" src="~/images/logo.jpg" width="50" height="50" alt="Logo">
+                    </a>
+                    <span class="navbar-brand fw-bold">EtuStackOverflow</span>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-center align-items-center">
+                        <ul class="navbar-nav gap-5">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                    <span class="fs-5 fw-bold">
+                                        Ana Sayfa
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/questions">
+                                    <span class="fs-5 fw-bold">
+                                        Sorular
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users">
+                                    <span class="fs-5 fw-bold">
+                                        Kullanicilar
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item" v-if="isLogin">
+                                <a class="nav-link" href="/profile">
+                                    <span class="fs-5 fw-bold">
+                                        Profil
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div v-if="!isLogin">
+                            <a type="button" class="btn btn-outline-dark me-1" href="/auth/login">Login</a>
+                            <a type="button" class="btn btn-outline-dark" href="/auth/register">Register</a>
+                        </div>
 
-                    @* <div class="icons dropdown">
-                    <div class="user-img c-pointer position-relative" data-toggle="dropdown">
-                    <span class="activity active"></span>
-                    <img src="~/images/avatar/11.png" height="40" width="40" alt="">
+                        <div v-if="isLogin" class="icons dropdown">
+                            <div class="user-img c-pointer position-relative" data-toggle="dropdown">
+                                <span class="activity active"></span>
+                                <img src="~/images/avatar/11.png" height="40" width="40" alt="">
+                            </div>
+                            <div class="drop-down dropdown-profile dropdown-menu">
+                                <div class="dropdown-content-body">
+                                    <ul>
+                                        <li>
+                                            <a href="/profile"><i class="icon-user"></i> <span>Profile</span></a>
+                                        </li>
+                                        <li><a v-on:click="logout()" href="#"><i class="icon-key"></i> <span>Logout</span></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="drop-down dropdown-profile dropdown-menu">
-                    <div class="dropdown-content-body">
-                    <ul>
-                    <li>
-                    <a href="/profile"><i class="icon-user"></i> <span>Profile</span></a>
-                    </li>
-                    <li><a href="/Auth/Login"><i class="icon-key"></i> <span>Logout</span></a></li>
-                    </ul>
-                    </div>
-                    </div>
-                    </div> *@
                 </div>
+            </nav>
+        </header>
+
+        <div id="preloader">
+            <div class="loader">
+                <svg class="circular" viewBox="25 25 50 50">
+                    <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+                </svg>
             </div>
-        </nav>
-    </header>
-
-    <div id="preloader">
-        <div class="loader">
-            <svg class="circular" viewBox="25 25 50 50">
-                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
-            </svg>
         </div>
-    </div>
 
-    <div class="main-content pt-5 min-vh-100">
-        <div class="container-fluid" id="baseBody">
-            @RenderBody()
+        <div class="main-content pt-5 min-vh-100">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
         </div>
     </div>
 
@@ -114,7 +119,8 @@
     <script src="~/js/settings.js"></script>
     <script src="~/js/gleek.js"></script>
     <script src="~/js/styleSwitcher.js"></script>
-    <script src="~/js/script.js"></script>
+    <script type="module" src="~/js/script.js"></script>
+    <script type="module" src="~/js/cookieManager.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

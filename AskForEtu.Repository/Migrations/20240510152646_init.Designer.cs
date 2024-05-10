@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AskForEtu.Repository.Migrations
 {
     [DbContext(typeof(AskForEtuDbContext))]
-    [Migration("20240507165354__init")]
-    partial class _init
+    [Migration("20240510152646_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,12 +43,9 @@ namespace AskForEtu.Repository.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -197,7 +194,7 @@ namespace AskForEtu.Repository.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("AskForEtu.Core.Entity.User", b =>
+            modelBuilder.Entity("AskForEtu.Core.Entity.Token", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -205,8 +202,34 @@ namespace AskForEtu.Repository.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("CommentId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("RefreshTokenExpires")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Tokens");
+                });
+
+            modelBuilder.Entity("AskForEtu.Core.Entity.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
@@ -259,10 +282,13 @@ namespace AskForEtu.Repository.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("VerifyEmailToken")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FacultyId");
+
+                    b.HasIndex("MajorId");
 
                     b.ToTable("Users");
                 });
@@ -270,8 +296,8 @@ namespace AskForEtu.Repository.Migrations
             modelBuilder.Entity("AskForEtu.Core.Entity.Comment", b =>
                 {
                     b.HasOne("AskForEtu.Core.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -357,6 +383,36 @@ namespace AskForEtu.Repository.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("AskForEtu.Core.Entity.Token", b =>
+                {
+                    b.HasOne("AskForEtu.Core.Entity.User", "User")
+                        .WithOne("Token")
+                        .HasForeignKey("AskForEtu.Core.Entity.Token", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AskForEtu.Core.Entity.User", b =>
+                {
+                    b.HasOne("AskForEtu.Core.Entity.Faculty", "Faculty")
+                        .WithMany()
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AskForEtu.Core.Entity.Major", "Major")
+                        .WithMany()
+                        .HasForeignKey("MajorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Faculty");
+
+                    b.Navigation("Major");
+                });
+
             modelBuilder.Entity("AskForEtu.Core.Entity.Faculty", b =>
                 {
                     b.Navigation("Majors");
@@ -364,11 +420,16 @@ namespace AskForEtu.Repository.Migrations
 
             modelBuilder.Entity("AskForEtu.Core.Entity.User", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("DisLikes");
 
                     b.Navigation("Likes");
 
                     b.Navigation("Questions");
+
+                    b.Navigation("Token")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
