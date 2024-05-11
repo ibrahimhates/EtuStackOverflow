@@ -1,4 +1,6 @@
-﻿using AskForEtu.Core.Dto.Request;
+﻿using AskForEtu.Core.Behaviour;
+using AskForEtu.Core.Dto.Mail;
+using AskForEtu.Core.Dto.Request;
 using AskForEtu.Core.Dto.Response;
 using AskForEtu.Core.Entity;
 using AskForEtu.Core.Hash;
@@ -6,12 +8,15 @@ using AskForEtu.Core.JwtGenerator;
 using AskForEtu.Core.ResultStructure;
 using AskForEtu.Core.ResultStructure.Dto;
 using AskForEtu.Core.Services;
+using AskForEtu.Core.Services.Queue;
 using AskForEtu.Core.Services.Repo;
 using AskForEtu.Repository.UnitofWork;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
 
 namespace AskForEtu.Repository.Services
 {
@@ -26,6 +31,10 @@ namespace AskForEtu.Repository.Services
         private readonly IMajorRepository _majorRepository;
         private readonly ITokenRepository _tokenRepository;
         private readonly IJwtProvider _provider;
+        private readonly ITaskQueue<EmailSendTemplate> _queue;
+        private readonly LinkGenerator _linkGenerator;
+        private readonly IPasswordResetRepository _pwdResetRepository;
+
         public AuthService(
             IUserRepository userRepository,
             IMapper mapper,
@@ -35,7 +44,10 @@ namespace AskForEtu.Repository.Services
             IFacultRepository facultRepository,
             IMajorRepository majorRepository,
             ITokenRepository tokenRepository,
-            IJwtProvider provider)
+            IJwtProvider provider,
+            ITaskQueue<EmailSendTemplate> queue,
+            LinkGenerator linkGenerator,
+            IPasswordResetRepository pwdResetRepository)
         {
             _userRepository=userRepository;
             _mapper=mapper;
@@ -46,6 +58,9 @@ namespace AskForEtu.Repository.Services
             _majorRepository=majorRepository;
             _tokenRepository=tokenRepository;
             _provider=provider;
+            _queue=queue;
+            _linkGenerator=linkGenerator;
+            _pwdResetRepository=pwdResetRepository;
         }
 
         public async Task<Response<TokenDto>> LoginAsync(LoginDto loginDto)
@@ -109,7 +124,7 @@ namespace AskForEtu.Repository.Services
             }
         }
 
-        public async Task<Response<NoContent>> RegisterAsync(RegisterDto registerDto)
+        public async Task<Response<NoContent>> RegisterAsync(RegisterDto registerDto, HttpContext context)
         {
             try
             {
@@ -136,7 +151,23 @@ namespace AskForEtu.Repository.Services
                 var emailVerifyToken = Guid.NewGuid().ToString();
                 user.VerifyEmailToken = emailVerifyToken;
 
-                // var confirmationLink = GenerateLink(emailVerifyToken);
+                var confirmationLink = GenerateLink(emailVerifyToken, context);
+
+                try
+                {
+                    var template = new EmailSendTemplate()
+                    {
+                        To = user.Email,
+                        Content = confirmationLink,
+                        SendType = SendType.VerifyEmail
+                    };
+
+                    await _queue.AddQueue(template);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
 
                 await _userRepository.CreateAsync(user);
 
@@ -154,6 +185,210 @@ namespace AskForEtu.Repository.Services
             {
                 _logger.LogError(err.Message);
                 return Response<NoContent>.Fail("Birseyler ters gitti.", 500);
+            }
+        }
+
+        public async Task<Response<UserIdPwdResetDto>> ForgetPasswordAsync(ForgetPasswordDto forgetPasswordDto)
+        {
+            int statusCode = StatusCodes.Status200OK;
+            try
+            {
+                User? user = await _userRepository.GetByUserOrEmailAsync(forgetPasswordDto.userNameOrEmail);
+
+                if (user is not User)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    throw new InvalidDataException($"Kullanici Bulunamadi");
+                }
+
+                var pswReset = await _pwdResetRepository
+                    .GetByCondition(x => x.UserId == user.Id, false)
+                    .FirstOrDefaultAsync();
+
+                if (pswReset is not null && pswReset.ExpiresDate > DateTime.Now)
+                {
+                    statusCode = StatusCodes.Status400BadRequest;
+                    throw new InvalidDataException("Henuz yeni kod isteyemezsin");
+                }
+
+                var resetCode = GenerateResetCode();
+                var expiresDate = DateTime.Now.AddMinutes(3);
+                var refCode = GenerateReferansCode();
+
+                if (pswReset is null)
+                {
+                    pswReset = new PasswordReset();
+                }
+
+                pswReset.ExpiresDate = expiresDate;
+                pswReset.UserId= user.Id;
+                pswReset.RefCode = refCode;
+                pswReset.AuthField = resetCode;
+
+
+                _pwdResetRepository.Update(pswReset);
+
+                await _unitOfWork.SaveAsync();
+                try
+                {
+                    var template = new EmailSendTemplate()
+                    {
+                        To = user.Email,
+                        Content = resetCode+";"+refCode,
+                        SendType = SendType.ResetPassword
+                    };
+
+                    await _queue.AddQueue(template);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException(
+                        "Mail gonderilirken hata olustu. Lutfen daha sonra tekrar deneyin.");
+                }
+
+                return Response<UserIdPwdResetDto>
+                    .Success(new(user.Id, refCode, expiresDate), $"Dogrulama kodu basarili bir sekilde gonderildi: {user.Email}"
+                        , 200);
+            }
+            catch (InvalidDataException err)
+            {
+                _logger.LogWarning(err.Message);
+                return Response<UserIdPwdResetDto>
+                    .Fail(err.Message, statusCode);
+            }
+            catch (InvalidOperationException err)
+            {
+                _logger.LogError(err.Message);
+                return Response<UserIdPwdResetDto>
+                    .Fail(err.Message, 500);
+            }
+            catch (Exception err)
+            {
+                _logger.LogError(err.Message);
+                return Response<UserIdPwdResetDto>
+                    .Fail("Bir seyler ters gitti.", 500);
+            }
+        }
+
+        public async Task<Response<string>> ForgetPasswordVerifyCodeAsync(
+               ForgetPasswordWithCodeDto _resetWithCodeDto)
+        {
+            int statusCode = 200;
+            try
+            {
+                var result = await _userRepository.AnyAsync(x => x.Id == _resetWithCodeDto.userIdentifier);
+
+                if (!result)
+                {
+                    statusCode = 404;
+                    throw new InvalidDataException("Kullanici bulunamadi.");
+                }
+
+                var pswReset = await _pwdResetRepository
+                    .GetByCondition(x => x.UserId == _resetWithCodeDto.userIdentifier, false)
+                    .FirstOrDefaultAsync();
+
+                if (pswReset is null)
+                {
+                    statusCode = 404;
+                    throw new InvalidDataException("Sifirlama kodu bulunamdi.");
+                }
+
+                if (pswReset.ExpiresDate < DateTime.UtcNow)
+                {
+                    statusCode = 400;
+                    throw new InvalidDataException("Sifirlama kodunun zamani bitti. Lutfen yeni kod alin.");
+                }
+
+                if (!pswReset.AuthField.Equals(_resetWithCodeDto.verifyCode))
+                {
+                    statusCode = 400;
+                    throw new InvalidDataException("Sifirlama kodunu yanlis girdiniz.");
+                }
+
+                var token = GeneratePasswordResetTokenAsync();
+
+                pswReset.AuthField = token;
+                pswReset.ExpiresDate = DateTime.Now.AddHours(3);
+
+                _pwdResetRepository.Update(pswReset);
+                await _unitOfWork.SaveAsync();
+
+                return Response<string>
+                    .Success(token, 200);
+            }
+            catch (InvalidDataException err)
+            {
+                _logger.LogWarning(err.Message);
+                return Response<string>
+                    .Fail(err.Message, statusCode);
+            }
+            catch (Exception err)
+            {
+                _logger.LogError(err.Message);
+                return Response<string>
+                    .Fail("Bir seyler ters gitti.", 500);
+            }
+        }
+
+        public async Task<Response<NoContent>> ChangePasswordWithResetMethodAsync(ChangePasswordWithResetDto resetRequest)
+        {
+            int statusCode = 200;
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(resetRequest.userIdentifier);
+
+                if (user is not User)
+                {
+                    statusCode = 404;
+                    throw new InvalidDataException("Kullanici bulunamadi");
+                }
+
+                var pswReset = await _pwdResetRepository
+                    .GetByCondition(x => x.UserId == user.Id, false)
+                    .FirstOrDefaultAsync();
+
+                if (pswReset is null
+                    || pswReset.ExpiresDate < DateTime.UtcNow
+                    || !pswReset.AuthField.Equals(resetRequest.token))
+                {
+                    statusCode = 400;
+                    throw new InvalidDataException("Gecersiz token");
+                }
+
+                if (!resetRequest.newPassword.Equals(resetRequest.newPasswordConfirm))
+                {
+                    statusCode = 400;
+                    throw new InvalidDataException("Sifreler uyusmuyor.");
+                }
+
+                if (_passwordHasher.Verify(user.PasswordHash, resetRequest.newPassword))
+                {
+                    statusCode = 400;
+                    throw new InvalidDataException("Eski sifrenizi yeni sifre olarak ayarlayamazsiniz.");
+                }
+
+                _pwdResetRepository.Delete(pswReset);
+
+                user.PasswordHash = _passwordHasher.Hash(resetRequest.newPassword);
+
+                _userRepository.Update(user);
+                await _unitOfWork.SaveAsync();
+
+                return Response<NoContent>
+                    .Success($"Sifreniz basarili bir sekilde degistirildi.", 200);
+            }
+            catch (InvalidDataException err)
+            {
+                _logger.LogWarning(err.Message);
+                return Response<NoContent>
+                    .Fail(err.Message, statusCode);
+            }
+            catch (Exception err)
+            {
+                _logger.LogError(err.Message);
+                return Response<NoContent>
+                    .Fail("Bir seyler ters gitti.", 500);
             }
         }
 
@@ -257,6 +492,69 @@ namespace AskForEtu.Repository.Services
 
             return new(accessToken);
         }
+
+        private string GenerateLink(string token, HttpContext context)
+        {
+            var verifyLink = _linkGenerator
+                .GetUriByAction(
+                        context,
+                        action: "verify-email",
+                        controller: "api",
+                        values: null,
+                        scheme: context.Request.Scheme
+                    );
+
+            return verifyLink+$"/{token}";
+        }
+
+        private string GenerateResetCode() =>
+               new Random().Next(100000, 999999).ToString();
+
+        private string GenerateReferansCode()
+        {
+            // A-Z 65 90
+            // 0-9 48 50
+            Random rnd = new Random();
+            int letterCount = 0;
+            int digitCount = 0;
+            char[] chars = new char[8];
+            for (int i = 0; i < 4; i++)
+            {
+                char ch = (char)rnd.Next(65, 91); // ASCII kodları A-Z aralığında
+                int rndLoc;
+                do
+                {
+                    rndLoc = rnd.Next(0, 8);
+                } while (chars[rndLoc] != '\0');
+
+                chars[rndLoc] = ch;
+
+                ch = (char)rnd.Next(48, 58); // ASCII kodları 0-9 aralığında
+                do
+                {
+                    rndLoc = rnd.Next(0, 8);
+                } while (chars[rndLoc] != '\0');
+
+                chars[rndLoc] = ch;
+            }
+
+            return string.Join("", chars);
+        }
+
+        public string GeneratePasswordResetTokenAsync()
+        {
+            byte[] randomBytes = new byte[32];
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomBytes);
+            }
+
+            string token = Convert.ToBase64String(randomBytes);
+
+            return token;
+        }
+
 
         //private string GenerateRefreshToken()
         //{

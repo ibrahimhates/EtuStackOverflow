@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AskForEtu.Repository\AskForEtu.Repository.csproj" />
+    <ProjectReference Include="..\EmailSenderService\EmailSenderService.csproj" />
   </ItemGroup>
 
 </Project>

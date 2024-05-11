@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 
 namespace EtuStackOverflow.Controllers.Api
@@ -33,57 +34,13 @@ namespace EtuStackOverflow.Controllers.Api
         {
             var questionList = new List<QuestionAll>();
 
-            string dosyaYolu = "veriler.txt";
-
-            try
-            {
-                using (StreamReader sr = new StreamReader(dosyaYolu))
-                {
-                    string satir;
-                    // Dosyanın sonuna kadar oku
-                    while ((satir = sr.ReadLine()) != null)
-                    {
-                        var question = JsonSerializer.Deserialize<QuestionAll>(satir);
-                        questionList.Add(question);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Hata: " + ex.Message);
-            }
-
             return Ok(questionList);
         }
 
         [HttpGet("one/{id:int}")]
         public IActionResult GetOneQuestion([FromRoute(Name = "id")]int id)
         {
-            string dosyaYolu = "veriler.txt";
-
-            try
-            {
-                using (StreamReader sr = new StreamReader(dosyaYolu))
-                {
-                    string satir;
-                    // Dosyanın sonuna kadar oku
-                    while ((satir = sr.ReadLine()) != null)
-                    {
-                        var ques = JsonSerializer.Deserialize<QuestionAll>(satir);
-                       
-                        if(ques != null && ques.id == id)
-                        {
-                            return Ok(ques);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Hata: " + ex.Message);
-            }
-
-            return NotFound("Question Bulunamadi");
+            return Ok(new Question { Id = id });
         }
 
         [HttpGet("interactions/{id:int}")]

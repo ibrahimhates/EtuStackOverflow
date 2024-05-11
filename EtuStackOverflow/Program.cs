@@ -4,6 +4,7 @@ using EtuStackOverflow.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.JwtSettings.json");
+builder.Configuration.AddJsonFile("appsettings.EmailSettings.json");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -22,6 +23,9 @@ builder.Services.ConfigureResponsibility();
 
 //JwtBearer configurasyonlari
 builder.Services.ConfigureJwtBearer(builder.Configuration);
+
+// Email sender background service
+builder.Services.ConfigureEmailService();
 
 var app = builder.Build();
 

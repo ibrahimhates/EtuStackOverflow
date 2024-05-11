@@ -11,10 +11,11 @@ namespace EtuStackOverflow.Controllers.Api
     public class AuthController : CustomController
     {
         private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService)
+        private readonly LinkGenerator _linkGenerator;
+        public AuthController(IAuthService authService, LinkGenerator linkGenerator)
         {
             _authService=authService;
+            _linkGenerator=linkGenerator;
         }
 
         [HttpPost("login")]
@@ -28,7 +29,31 @@ namespace EtuStackOverflow.Controllers.Api
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            var result = await _authService.RegisterAsync(registerDto);
+            var result = await _authService.RegisterAsync(registerDto, HttpContext);
+
+            return CreateActionResultInstance(result);
+        }
+
+        [HttpPost("forget-password")]
+        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordDto forgetPasswordDto)
+        {
+            var result = await _authService.ForgetPasswordAsync(forgetPasswordDto);
+
+            return CreateActionResultInstance(result);
+        }
+
+        [HttpPost("verify-reset-code")]
+        public async Task<IActionResult> VerifyPasswordResetCode([FromBody] ForgetPasswordWithCodeDto forgetPasswordDto)
+        {
+            var result = await _authService.ForgetPasswordVerifyCodeAsync(forgetPasswordDto);
+
+            return CreateActionResultInstance(result);
+        }
+        
+        [HttpPost("change-password-reset")]
+        public async Task<IActionResult> ChabgePasswordWithResetCode([FromBody]ChangePasswordWithResetDto changePasswordWith)
+        {
+            var result = await _authService.ChangePasswordWithResetMethodAsync(changePasswordWith);
 
             return CreateActionResultInstance(result);
         }
@@ -45,7 +70,7 @@ namespace EtuStackOverflow.Controllers.Api
 
         [Route("/api/verify-email/{t}")]
         [HttpGet]
-        public async Task<IActionResult> VerifyEmail([FromRoute(Name = "t")]string t)
+        public async Task<IActionResult> VerifyEmail([FromRoute(Name = "t")] string t)
         {
             var result = await _authService.VerifyEmailRequestAsync(t);
 
@@ -55,6 +80,15 @@ namespace EtuStackOverflow.Controllers.Api
             }
 
             return Redirect("/email/islem_basarisiz");
+        }
+
+        [HttpGet("test")]
+        public async Task<IActionResult> TestMethod()
+        {
+            var baseUrl = _linkGenerator
+                .GetUriByAction(HttpContext, action: "verify-email", controller: "api", values: null, scheme: Request.Scheme);
+
+            return Ok(baseUrl);
         }
     }
 }

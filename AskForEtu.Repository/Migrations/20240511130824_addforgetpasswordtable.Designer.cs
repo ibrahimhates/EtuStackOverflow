@@ -4,6 +4,7 @@ using AskForEtu.Repository.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AskForEtu.Repository.Migrations
 {
     [DbContext(typeof(AskForEtuDbContext))]
-    partial class AskForEtuDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240511130824_addforgetpasswordtable")]
+    partial class addforgetpasswordtable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

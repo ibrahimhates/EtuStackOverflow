@@ -13,6 +13,7 @@ namespace AskForEtu.Repository.Context
 
         DbSet<User> Users { get; set; }
         DbSet<Token> Tokens { get; set; }
+        DbSet<PasswordReset> PasswordResets { get; set; }
         DbSet<Question> Questions { get; set; }
         DbSet<Comment> Comments{ get; set; }
         DbSet<DisLike> DisLikes  { get; set; }
