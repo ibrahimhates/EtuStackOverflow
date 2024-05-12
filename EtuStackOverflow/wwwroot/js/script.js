@@ -1,33 +1,48 @@
-import { getCookie,deleteCookie } from './cookieManager.js';
+import { getCookie, deleteCookie } from './cookieManager.js';
+import { getUserProfileDetail, updateUserProfileDetail } from './data/user.js';
 
 new Vue({
     el: "#baseBody",
     data: {
-        allQuestionList: [],
-        question: {},
-        userData: [],
+        userProfileDetail: {
+            fullName: "",
+            name: "",
+            surName: "",
+            dateOfBirth: "" | null,
+            profilePhoto: [],
+            email: "",
+            verifyEmail: false,
+            userName: "",
+            commentCount: 0,
+            interactionCount: 0
+        },
+        userProfileDetailEdit: {
+            name: "",
+            surName: "",
+            dateOfBirth: "" | null,
+            profilePhoto: "",
+            userName: "",
+        },
         searchTerm: "",
-        profileQuestionData: [],
-        profileInteractionData: [],
-        islike: false,
-        isDisLike: false,
         token: "",
-        isLogin: false
+        isLogin: false,
+        isLoading: false,
+        errorMessage: "",
+        isError: false
     },
     mounted() {
         this.$nextTick(() => {
             if (this.$refs.questionPage) {
-                this.getAll();
+
             }
             if (this.$refs.questionDetail) {
-                this.getOneQuestion()
+
             }
             if (this.$refs.userPageList) {
-                this.getAllUser();
+
             }
             if (this.$refs.profileList) {
-                this.getDataForQuestion(1);
-                this.getDataForInteraction(1);
+                getUserProfileDetail(this);
             }
             if (this.$refs.homePage) {
                 const tokenCookieValue = getCookie("accessToken")
@@ -37,10 +52,54 @@ new Vue({
                     this.token = tokenCookieValue;
                     this.isLogin = true;
                 }
+                getUserProfileDetail(this);
             }
         });
     },
     methods: {
+        updateProfile() {
+            this.isLoading = true;
+            updateUserProfileDetail(this)
+                .catch(err => {
+                    this.isLoading = false;
+                })
+        },
+        getProfilePhoto(base64String) {
+
+            return 'data:image/png+svg+xml;base64,' + base64String;
+        },
+        uploadProfilePhoto(event) {
+            var file = event.target.files[0];
+
+            if (!(file.type === 'image/png'
+                || file.type === 'image/jpg'
+                || file.type === 'image/jpeg')) {
+                this.isError = true;
+                this.errorMessage = 'Lutfen PNG,JPG,JPEG dosyasi yukleyin.';
+                return;
+            }
+
+            var maxSizeInBytes = 1024 * 1024 * 4; // 1MB
+            if (file.size > maxSizeInBytes) {
+                this.isError = true;
+                this.errorMessage = 'Yuklemek istediginiz resim cok buyuk. Lutfen boyutu max 4MB bir resim secin.';
+                console.log(file.size / (1024 * 1024));
+                return;
+            }
+
+            var reader = new FileReader();
+
+            const app = this;
+            reader.onload = function (event) {
+                var arrayBuffer = event.target.result;
+                var uint8Array = new Uint8Array(arrayBuffer);
+
+                app.userProfileDetailEdit.profilePhoto = btoa(String.fromCharCode(...uint8Array));
+            };
+
+            reader.readAsArrayBuffer(file);
+            console.log(app.userProfileDetailEdit.profilePhoto);
+        },
         getAll() {
             axios.get(`/api/questions`)
                 .then(response => {
@@ -95,38 +154,13 @@ new Vue({
                 })
                 .catch(error => console.error('Birseyler ters gitti '));
         },
-        disLike(id) {
-
-            if (this.isDisLike) {
-                this.profileInteractionData[id].disLikeCount--;
-
-            } else {
-                this.profileInteractionData[id].disLikeCount++;
-
-                if (this.isLike) {
-                    this.profileInteractionData[id].likeCount--;
-                    this.isLike = false;
-                }
-            }
-            this.isDisLike = !this.isDisLike;
-        },
-        like(id) {
-
-            if (this.isLike) {
-                this.profileInteractionData[id].likeCount--;
-
-            } else {
-                this.profileInteractionData[id].likeCount++;
-
-                if (this.isDisLike) {
-                    this.profileInteractionData[id].disLikeCount--;
-                    this.isDisLike = false;
-                }
-            }
-            this.isLike = !this.isLike;
-        },
         timeSince(date) {
             return moment(date).fromNow();
+        },
+        getFormatedDate(date) {
+            const formatedDate = moment(date).format('DD-MM-YYYY');
+            this.userProfileDetailEdit.dateOfBirth = moment(date).format('YYYY-MM-DD');
+            return formatedDate;
         },
         logout() {
             axios.post(`/api/auth/logout`, null, { headers: { 'Authorization': 'Bearer ' + this.token } })
@@ -138,3 +172,5 @@ new Vue({
         }
     }
 })
+
+

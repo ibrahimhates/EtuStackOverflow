@@ -77,6 +77,15 @@ new Vue({
                     this.isLoading = false
                     this.errorMessage = error.response.data.messages[0]
                 });
+        },
+        passWordMatchControl() {
+            const result = this.register.password != this.register.passwordAgain;
+            var confirm_password = document.getElementById("confirm_password");
+            if (result) {
+                confirm_password.setCustomValidity("Sifreler uyusmuyor");
+            } else {
+                confirm_password.setCustomValidity('');
+            }
         }
     }
 })

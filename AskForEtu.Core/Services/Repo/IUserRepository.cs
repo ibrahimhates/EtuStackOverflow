@@ -7,5 +7,6 @@ namespace AskForEtu.Core.Services.Repo
     {
         Task<User> GetByUserOrEmailAsync(string userNameOrEmail, bool trackChanges = false);
         Task<User> GetByEmailVerifyTokenAsync(string token, bool trackChanges = false);
+        Task<User> GetUserProfileDetail(int id, bool trackChanges = false);
     }
 }

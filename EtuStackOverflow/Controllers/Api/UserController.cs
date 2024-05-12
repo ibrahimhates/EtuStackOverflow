@@ -1,60 +1,39 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AskForEtu.Core.Dto.Request;
+using AskForEtu.Core.Services;
+using EtuStackOverflow.Controllers.Api.CustomControllerBase;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EtuStackOverflow.Controllers.Api
 {
     [Route("api/[controller]s")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : CustomController
     {
-        private readonly List<string[]> _users;
-        private static List<User> localDbUser = new List<User>();
-        public UserController()
+        private readonly IUserService _userService;
+        public UserController(IUserService userService)
         {
-            _users = new List<string[]>();
-            _users.Add(new[] { "Ibrahim Halil Ates", "ibrahimhates.png" });
-            _users.Add(new[] { "Muhammed Furkan Conoglu", "furkanconoglu.jpeg" });
-            _users.Add(new[] { "Burakhan Kurt", "burakhankurt.jpeg" });
-            _users.Add(new[] { "Omer Faruk Soydemir", "omerfaruksoydemir.jpeg" });
+            _userService=userService;
         }
 
-        [HttpGet]
-        public IActionResult AllUser()
+        [HttpGet("profile-detail"), Authorize]
+        public async Task<IActionResult> UserProfileDetailAsync()
         {
-            localDbUser.Clear();
+            var userId = GetUserId();
 
-            Random random = new Random();
-            for (int i = 0; i < 8; i++)
-            {
-                var randomUserIndex = random.Next(0, _users.Count);
-                localDbUser.Add(new()
-                {
-                    Id = i + 1,
-                    Name = _users[randomUserIndex][0],
-                    UserName = _users[randomUserIndex][1].Split(".")[0],
-                    ProfilePicture = _users[randomUserIndex][1],
-                });
-            }
+            var result = await _userService.UserProfileDetailAsync(int.Parse(userId));
 
-            return Ok(localDbUser);// 200 basarili // 404 notfound // 400 badrequest // 500 internel server
+            return CreateActionResultInstance(result);
         }
 
-        [HttpGet("filter")]
-        public IActionResult FilterAllUser([FromQuery] string searchTerm)
+        [HttpPost("update-profile-detail"), Authorize]
+        public async Task<IActionResult> UpdateProfileDetail([FromBody] UserProfileUpdateDto profileUpdateDto)
         {
-            var searchTermList = localDbUser
-                .Where(x => x.UserName.Contains(searchTerm)
-                    || x.Name.Contains(searchTerm))
-                .ToList();
+            var userId = GetUserId();
 
-            return Ok(searchTermList);
+            var result = await _userService.UpdateUserProfileDetailAsync(int.Parse(userId), profileUpdateDto);
+
+            return CreateActionResultInstance(result);
         }
-
-    }
-    public class User
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string UserName { get; set; }
-        public string ProfilePicture { get; set; }
     }
 }

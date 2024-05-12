@@ -3,6 +3,7 @@ using AskForEtu.Core.Services.Repo;
 using AskForEtu.Repository.Context;
 using AskForEtu.Repository.Services.Generic;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace AskForEtu.Repository.Services.Repo
 {
@@ -24,8 +25,17 @@ namespace AskForEtu.Repository.Services.Repo
 
         public async Task<User> GetByEmailVerifyTokenAsync(string token, bool trackChanges = false)
         {
-            var user = await GetByCondition(x => x.VerifyEmailToken.Equals(token) 
-                ,trackChanges).FirstOrDefaultAsync();
+            var user = await GetByCondition(x => x.VerifyEmailToken.Equals(token)
+                , trackChanges).FirstOrDefaultAsync();
+
+            return user;
+        }
+
+        public async Task<User> GetUserProfileDetail(int id, bool trackChanges = false)
+        {
+            var user = await GetByCondition(x => x.Id == id, trackChanges)
+                .Include(x => x.Comments)
+                .FirstOrDefaultAsync();
 
             return user;
         }

@@ -13,6 +13,12 @@ namespace AskForEtu.Core.Map
 
             CreateMap<Faculty, FacultyDto>();
             CreateMap<Major, MajorDto>();
+
+            CreateMap<User, UserListDto>();
+            CreateMap<UserProfileUpdateDto,User>();
+            CreateMap<User, UserProfileDto>()
+                .ForMember(dest => dest.CommentCount, opt => opt.MapFrom(src => src.Comments.Count()));
+
         }
     }
 }

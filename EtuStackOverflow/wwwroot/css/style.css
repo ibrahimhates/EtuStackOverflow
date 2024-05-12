@@ -9513,7 +9513,6 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
   margin-bottom: 20px; }
 
 .login-form__btn {
-  background: #455F98;
   color: #fff;
   padding: 13px 40px;
   font-size: 14px; }

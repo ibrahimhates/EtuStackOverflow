@@ -92,6 +92,15 @@ var forgetPassword = new Vue({
                     this.isLoading = false
                     this.errorMessage = error.response.data.messages[0]
                 });
+        },
+        passWordMatchControl() {
+            const result = this.changePasswordRequest.newPasswordConfirm != this.changePasswordRequest.newPassword;
+            var confirm_password = document.getElementById("confirm_new_password");
+            if (result) {
+                confirm_password.setCustomValidity("Sifreler uyusmuyor");
+            } else {
+                confirm_password.setCustomValidity('');
+            }
         }
     }
 })

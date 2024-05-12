@@ -33,6 +33,7 @@ namespace EtuStackOverflow.Extensions
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
         }
 
@@ -42,6 +43,7 @@ namespace EtuStackOverflow.Extensions
             services.AddScoped<IMajorRepository, MajorRepository>();
             services.AddScoped<IFacultRepository, FacultyRepository>();
             services.AddScoped<ITokenRepository, TokenRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
         }
 
