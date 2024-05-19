@@ -19,6 +19,9 @@ namespace AskForEtu.Core.Map
             CreateMap<User, UserProfileDto>()
                 .ForMember(dest => dest.CommentCount, opt => opt.MapFrom(src => src.Comments.Count()));
 
+            CreateMap<Question, QuestionListDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.ProfilePhoto, opt => opt.MapFrom(src => src.User.ProfilePhoto));
         }
     }
 }

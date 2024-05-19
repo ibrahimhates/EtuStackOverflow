@@ -1,13 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.Json;
+﻿using AskForEtu.Core.Services;
+using EtuStackOverflow.Controllers.Api.CustomControllerBase;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EtuStackOverflow.Controllers.Api
 {
     [ApiController]
     [Route("api/[controller]s")]
-    public class QuestionController : ControllerBase
+    public class QuestionController : CustomController
     {
+        private readonly IQuestionService _questionService;
+
+        public QuestionController(IQuestionService questionService)
+        {
+            _questionService=questionService;
+        }
+
         [HttpGet("allForUser/{id:int}")]
         public IActionResult AllQuestionForUser(int id)
         {
@@ -30,11 +37,11 @@ namespace EtuStackOverflow.Controllers.Api
         }
 
         [HttpGet]
-        public IActionResult AllQuestions()
+        public async Task<IActionResult> AllQuestionsAsync([FromQuery]int pageNumber)
         {
-            var questionList = new List<QuestionAll>();
+            var result = await _questionService.GetAllQuestionWithPaggingAsync(pageNumber);
 
-            return Ok(questionList);
+            return CreateActionResultInstance(result);
         }
 
         [HttpGet("one/{id:int}")]

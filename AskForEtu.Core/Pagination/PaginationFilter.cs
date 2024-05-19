@@ -1,7 +1,14 @@
-﻿
-namespace AskForEtu.Core.Pagination
+﻿namespace AskForEtu.Core.Pagination
 {
-    public class PaginationFilter
+    public static class PaginationFilter
     {
+        public static IQueryable<T> ToPagging<T>(this IQueryable<T> query,int pageNumber,int pageSize)
+        {
+            var pagedList = query
+                    .Skip((pageNumber - 1)*pageSize)
+                    .Take(pageSize);
+
+            return pagedList;
+        }
     }
 }

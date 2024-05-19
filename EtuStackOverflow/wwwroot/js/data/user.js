@@ -42,6 +42,7 @@ export const getUserProfileDetail = async (app) => {
 }
 
 export const updateUserProfileDetail = async (app) => {
+    localStorage.removeItem('userProfileDetail');
     const tokenCookieValue = getCookie("accessToken")
 
     if (tokenCookieValue === "") {
