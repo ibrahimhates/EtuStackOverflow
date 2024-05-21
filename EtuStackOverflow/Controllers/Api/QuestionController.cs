@@ -1,12 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+﻿using AskForEtu.Core.Services;
+using EtuStackOverflow.Controllers.Api.CustomControllerBase;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EtuStackOverflow.Controllers.Api
 {
     [ApiController]
     [Route("api/[controller]s")]
-    public class QuestionController : ControllerBase
+    public class QuestionController : CustomController
     {
+        private readonly IQuestionService _questionService;
+
+        public QuestionController(IQuestionService questionService)
+        {
+            _questionService=questionService;
+        }
+
         [HttpGet("allForUser/{id:int}")]
         public IActionResult AllQuestionForUser(int id)
         {
@@ -29,61 +37,17 @@ namespace EtuStackOverflow.Controllers.Api
         }
 
         [HttpGet]
-        public IActionResult AllQuestions()
+        public async Task<IActionResult> AllQuestionsAsync([FromQuery]int pageNumber)
         {
-            var questionList = new List<QuestionAll>();
+            var result = await _questionService.GetAllQuestionWithPaggingAsync(pageNumber);
 
-            string dosyaYolu = "veriler.txt";
-
-            try
-            {
-                using (StreamReader sr = new StreamReader(dosyaYolu))
-                {
-                    string satir;
-                    // Dosyanın sonuna kadar oku
-                    while ((satir = sr.ReadLine()) != null)
-                    {
-                        var question = JsonSerializer.Deserialize<QuestionAll>(satir);
-                        questionList.Add(question);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Hata: " + ex.Message);
-            }
-
-            return Ok(questionList);
+            return CreateActionResultInstance(result);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("one/{id:int}")]
         public IActionResult GetOneQuestion([FromRoute(Name = "id")]int id)
         {
-            string dosyaYolu = "veriler.txt";
-
-            try
-            {
-                using (StreamReader sr = new StreamReader(dosyaYolu))
-                {
-                    string satir;
-                    // Dosyanın sonuna kadar oku
-                    while ((satir = sr.ReadLine()) != null)
-                    {
-                        var ques = JsonSerializer.Deserialize<QuestionAll>(satir);
-                       
-                        if(ques != null && ques.id == id)
-                        {
-                            return Ok(ques);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Hata: " + ex.Message);
-            }
-
-            return NotFound("Question Bulunamadi");
+            return Ok(new Question { Id = id });
         }
 
         [HttpGet("interactions/{id:int}")]

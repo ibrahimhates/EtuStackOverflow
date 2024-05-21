@@ -1,9 +1,31 @@
+using AskForEtu.Core.Map;
+using EtuStackOverflow.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("appsettings.JwtSettings.json");
+builder.Configuration.AddJsonFile("appsettings.EmailSettings.json");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
+
+// dbContext yapilandirilmasi connection string baglantisi
+builder.Services.ConfigureDbContext(builder.Configuration);
+
+// Automapper added
+builder.Services.AddAutoMapper(typeof(Mapper));
+
+//Service Repo Bagimlilik Kayitlari
+builder.Services.ConfigureServices();
+builder.Services.ConfigureRepos();
+builder.Services.ConfigureResponsibility();
+
+//JwtBearer configurasyonlari
+builder.Services.ConfigureJwtBearer(builder.Configuration);
+
+// Email sender background service
+builder.Services.ConfigureEmailService();
 
 var app = builder.Build();
 

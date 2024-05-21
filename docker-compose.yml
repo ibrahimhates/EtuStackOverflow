@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  etustackoverflow:
+    image: ${DOCKER_REGISTRY-}etustackoverflow
+    build:
+      context: .
+      dockerfile: EtuStackOverflow/Dockerfile

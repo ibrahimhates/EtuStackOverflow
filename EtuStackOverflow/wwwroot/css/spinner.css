@@ -1,0 +1,26 @@
+﻿.custom-spinner {
+    margin-left:10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #ffffff;
+    border-right-color: #ffffff;
+    animation: spin 0.5s linear infinite;
+}
+
+.custom-question-spinner {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 8px solid rgba(0, 0, 0, 0);
+    border-top-color: #a0a0a0;
+    border-bottom-color: #a0a0a0;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

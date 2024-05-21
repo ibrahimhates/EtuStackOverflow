@@ -1,4 +1,8 @@
-﻿<div class="row d-flex justify-content-center" ref="questionPage">
+﻿@{
+    ViewData["Title"] = "Questions";
+}
+
+<div class="row d-flex justify-content-center" ref="questionPage">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
@@ -137,34 +141,51 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="media media-reply pb-2" v-for="(ques) in allQuestionList" :key="ques.id">
+                <div class="media media-reply pb-2" v-for="(question) in questions" :key="question.id">
                     <div class="media-body">
-                        <a :href="'/questions/'+ ques.id" v-on:click="changeLocationRoute(ques.id)">
+                        <a :href="'/questions/'+ question.id" v-on:click="changeLocationRoute(question.id)">
                             <div class="d-sm-flex justify-content-between mb-2">
                                 <div>
-                                    <h5 class="mb-sm-0 fw-bold">{{ques.title}}</h5>
+                                    <h5 class="mb-sm-0 fw-bold">{{question.title}}</h5>
                                 </div>
                                 <div>
-                                    <small class="text-muted ml-3">12 min ago</small>
+                                    <small class="text-muted ml-3">{{timeSince(question.createdDate)}}</small>
                                 </div>
                             </div>
                             <h7>
-                                {{ques.content}}
+                                {{question.content}}
                             </h7>
                         </a>
 
                         <div class="d-flex justify-content-end">
                             <div class="d-flex align-items-center">
                                 <div class="">
-                                    <img v-bind:src="'/images/founderavatar/' + ques.pp" class="rounded-circle" width="30" height="30">
+                                    <img v-if="question.profilePhoto.length !== 0" v-bind:src="getProfilePhoto(question.profilePhoto)" class="rounded-circle" width="30" height="30">
+                                    <span v-if="!(question.profilePhoto.length !== 0)"
+                                          class="bg-light text-danger rounded-circle fs-5 fw-bold d-flex justify-content-center align-items-center" style="width: 30px;height: 30px;">
+                                        {{question.userName.toUpperCase().charAt(0)}}
+                                    </span>
                                 </div>
                                 <div class="ml-2">
                                     <a class="text-dark" href="/users">
-                                        <span>{{ques.username}}</span>
+                                        <span>{{question.userName}}</span>
                                     </a>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div v-if="!(questions.length > 0)&&(isLoading)" class="d-flex justify-content-center">
+                    <div class="">
+                        <div class="custom-question-spinner">
+                        </div>
+                    </div>
+                </div>
+                <div v-if="!(questions.length > 0)&&(!isLoading)" class="d-flex justify-content-center">
+                    <div class="fw-bold fs-5">
+                        <span>
+                            Soru bulunamadı...
+                        </span>
                     </div>
                 </div>
             </div>
@@ -173,20 +194,24 @@
     <div class="bootstrap-pagination">
         <nav>
             <ul class="pagination justify-content-center">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span></a>
+                <li class="page-item" :disabled="!questionPagging.hasPrevios">
+                    <a class="page-link" href="#" aria-label="Previous" v-on:click.prevent="goToPage(questionPagging.currentPage - 1)">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
                 </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">1</a>
+                <li class="page-item"
+                    v-for="(page,index) in pages"
+                    :key="index"
+                    :class="{ active: page === questionPagging.currentPage }">
+                    <a class="page-link" href="#" v-on:click.prevent="goToPage(page)" v-if="page !== '...'">{{ page }}</a>
+                    <span class="page-link" v-else>{{ page }}</span>
                 </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">3</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span></a>
+                <li class="page-item" :disabled="!questionPagging.hasNext">
+                    <a class="page-link" href="#" aria-label="Next" v-on:click.prevent="goToPage(questionPagging.currentPage + 1)">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
                 </li>
             </ul>
         </nav>

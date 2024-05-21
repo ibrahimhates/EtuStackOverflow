@@ -12,6 +12,38 @@
       "files": [
         "vue.cjs.js"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "vue3-toastify@0.2.1",
+      "destination": "wwwroot/vue3-toastify/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "vue@latest",
+      "destination": "wwwroot/vue/",
+      "files": [
+        "index.js",
+        "index.mjs",
+        "jsx.d.ts",
+        "LICENSE",
+        "package.json",
+        "README.md",
+        "dist/vue.cjs.js",
+        "dist/vue.cjs.prod.js",
+        "dist/vue.d.mts",
+        "dist/vue.d.ts",
+        "dist/vue.esm-browser.js",
+        "dist/vue.esm-browser.prod.js",
+        "dist/vue.esm-bundler.js",
+        "dist/vue.global.js",
+        "dist/vue.global.prod.js",
+        "dist/vue.runtime.esm-browser.js",
+        "dist/vue.runtime.esm-browser.prod.js",
+        "dist/vue.runtime.esm-bundler.js",
+        "dist/vue.runtime.global.js",
+        "dist/vue.runtime.global.prod.js"
+      ]
     }
   ]
 }
