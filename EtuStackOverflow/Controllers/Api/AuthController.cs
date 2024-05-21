@@ -81,14 +81,5 @@ namespace EtuStackOverflow.Controllers.Api
 
             return Redirect("/email/islem_basarisiz");
         }
-
-        [HttpGet("test")]
-        public async Task<IActionResult> TestMethod()
-        {
-            var baseUrl = _linkGenerator
-                .GetUriByAction(HttpContext, action: "verify-email", controller: "api", values: null, scheme: Request.Scheme);
-
-            return Ok(baseUrl);
-        }
     }
 }

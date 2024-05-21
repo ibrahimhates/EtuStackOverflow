@@ -77,8 +77,8 @@ new Vue({
                 } else {
                     this.token = tokenCookieValue;
                     this.isLogin = true;
+                    getUserProfileDetail(this);
                 }
-                getUserProfileDetail(this);
             }
         });
     },

@@ -10,6 +10,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["EtuStackOverflow/EtuStackOverflow.csproj", "EtuStackOverflow/"]
+COPY ["AskForEtu.Repository/AskForEtu.Repository.csproj", "AskForEtu.Repository/"]
+COPY ["AskForEtu.Core/AskForEtu.Core.csproj", "AskForEtu.Core/"]
+COPY ["EmailSenderService/EmailSenderService.csproj", "EmailSenderService/"]
 RUN dotnet restore "./EtuStackOverflow/EtuStackOverflow.csproj"
 COPY . .
 WORKDIR "/src/EtuStackOverflow"
