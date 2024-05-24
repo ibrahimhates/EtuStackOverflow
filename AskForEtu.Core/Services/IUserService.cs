@@ -9,6 +9,7 @@ namespace AskForEtu.Core.Services
     {
         Task<Response<UserProfileDto>> UserProfileDetailAsync(int userId);
         Task<Response<NoContent>> UpdateUserProfileDetailAsync(int userId, UserProfileUpdateDto profileUpdateDto);
-        Task<Response<UserListDto>> AllUserAsync();
+        Task<Response<List<UserListDto>>> AllUserWithPaggingAsync(int pageNumber);
+        Task<Response<UserProfileDto>> GetOneUserDetailAsync(int userId);
     }
 }
