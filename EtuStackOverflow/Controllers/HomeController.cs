@@ -34,6 +34,12 @@ namespace EtuStackOverflow.Controllers
             return View();
         }
 
+        [Route("/users/{userId:int}")]
+        public IActionResult UserDetail()
+        {
+            return View();
+        }
+
         [Route("/profile")]
         public IActionResult Profile(int id)
         {
