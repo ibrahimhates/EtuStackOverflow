@@ -1,5 +1,5 @@
 import { getCookie, deleteCookie } from './cookieManager.js';
-import { getUserProfileDetail, updateUserProfileDetail } from './data/user.js';
+import { getUserProfileDetail, updateUserProfileDetail, getAllUsers } from './data/user.js';
 import { getAllQuestionWithPage } from './data/question.js';
 
 new Vue({
@@ -24,8 +24,9 @@ new Vue({
             profilePhoto: "",
             userName: "",
         },
+        userList:[],
         questions: [],
-        questionPagging: {
+        pagging: {
             currentPage: 1,
             totalPage: 0,
             pageSize: 0,
@@ -53,7 +54,7 @@ new Vue({
                   pageNumber = parseInt(pageNumber);
                 }
 
-                this.questionPagging.currentPage = pageNumber;
+                this.pagging.currentPage = pageNumber;
 
                 this.isLoading = true;
                 getAllQuestionWithPage(this)
@@ -64,7 +65,13 @@ new Vue({
 
             }
             if (this.$refs.userPageList) {
-
+                this.isLoading = true;
+                getAllUsers(this)
+                    .then(() => {
+                        this.isLoading = false;
+                    }).catch(err => {
+                        this.isLoading = false;
+                    })
             }
             if (this.$refs.profileList) {
                 getUserProfileDetail(this);
@@ -84,8 +91,8 @@ new Vue({
     },
     computed: {
         pages() {
-            const totalPage = this.questionPagging.totalPage;
-            const currentPage = this.questionPagging.currentPage;
+            const totalPage = this.pagging.totalPage;
+            const currentPage = this.pagging.currentPage;
             let pages = [];
 
             if (totalPage <= 5) {
@@ -150,8 +157,8 @@ new Vue({
         },
         goToPage(page) {
             if (page === '...') return;
-            if (page < 1 || page > this.questionPagging.totalPage) return;
-            this.questionPagging.currentPage = page;
+            if (page < 1 || page > this.pagging.totalPage) return;
+            this.pagging.currentPage = page;
             this.isLoading = true;
             getAllQuestionWithPage(this)
                 .then(() => this.isLoading = false)
@@ -160,16 +167,15 @@ new Vue({
         changeLocationRoute(id) {
             window.location.href += `/${id}`
         },
-        getAllUser() {
-            axios.get(`/api/users`)
-                .then(response => {
-                    this.userData = response.data;
-                })
-                .catch(error => console.error('Birseyler ters gitti'));
-        },
         getAllUserWithSearchTerm() {
             if (this.searchTerm === "") {
-                this.getAllUser()
+                this.isLoading = true;
+                getAllUsers(this)
+                    .then(() => {
+                        this.isLoading = false;
+                    }).catch(err => {
+                        this.isLoading = false;
+                    })
                 return;
             }
             axios.get(`/api/users/filter?searchTerm=${this.searchTerm}`)
@@ -207,7 +213,13 @@ new Vue({
                     deleteCookie("accessToken");
                     window.location.reload();
                 })
-                .catch(error => console.error('Birseyler ters gitti '));
+                .catch(error => {
+                    if (error.response.status == 401) {
+                        deleteCookie("accessToken");
+                        window.location.reload();
+                    }
+                    console.log(error);
+                });
         }
     }
 })

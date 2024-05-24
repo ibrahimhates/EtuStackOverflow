@@ -3,9 +3,9 @@
 export const getAllQuestionWithPage = async (app) => {
     app.questions = [];
     try {
-        const response = await axios.get(`/api/questions?pageNumber=${app.questionPagging.currentPage}`);
+        const response = await axios.get(`/api/questions?pageNumber=${app.pagging.currentPage}`);
         app.questions = response.data.data;
-        app.questionPagging = response.data.pagination;
+        app.pagging = response.data.pagination;
     } catch (error) {
         const statusCode = error.response.status;
         if (statusCode === 401) {

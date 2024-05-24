@@ -65,7 +65,7 @@ var forgetPassword = new Vue({
                 .then((response) => {
                     this.isLoading = false;
                     console.log("token",response.data)
-                    this.changePasswordRequest.token = response.data.data;
+                    this.changePasswordRequest.token = response.data.messages[0];
                     this.inEnterVerifyCode = false;
                     this.inChangePassword = true;
                 })
@@ -81,11 +81,14 @@ var forgetPassword = new Vue({
             this.isLoading = true;
 
             this.changePasswordRequest.userIdentifier = this.resetPasswordResponse.userIdentifier;
-
             axios.post(`/api/auth/change-password-reset`, this.changePasswordRequest)
                 .then((response) => {
                     this.isLoading = false;
                     this.isSuccess = true;
+                    this.errorMessage = "Şifre başarılı bir şekilde sıfırlandı!"
+                    setInterval(() => {
+                        window.location.pathname = "/Auth/login"
+                    },4000)
                 })
                 .catch(error => {
                     this.isError = true

@@ -205,14 +205,14 @@ namespace AskForEtu.Repository.Services
                     .GetByCondition(x => x.UserId == user.Id, false)
                     .FirstOrDefaultAsync();
 
-                if (pswReset is not null && pswReset.ExpiresDate > DateTime.Now)
+                if (pswReset is not null && pswReset.ExpiresDate > DateTime.UtcNow)
                 {
                     statusCode = StatusCodes.Status400BadRequest;
                     throw new InvalidDataException("Henuz yeni kod isteyemezsin");
                 }
 
                 var resetCode = GenerateResetCode();
-                var expiresDate = DateTime.Now.AddMinutes(3);
+                var expiresDate = DateTime.UtcNow.AddMinutes(3);
                 var refCode = GenerateReferansCode();
 
                 if (pswReset is null)

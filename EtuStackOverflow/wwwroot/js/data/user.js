@@ -73,6 +73,16 @@ export const updateUserProfileDetail = async (app) => {
     }
 }
 
+export const getAllUsers = async (app) => {
+    try {
+        const response = await axios.get(`/api/users?pageNumber=${app.pagging.currentPage}`);
+        app.userList = response.data.data;
+        app.pagging = response.data.pagination;
+    } catch (error) {
+        throw error;
+    }
+}
+
 function fillEditProfile(app) {
     app.userProfileDetailEdit.name = app.userProfileDetail.name;
     app.userProfileDetailEdit.surName = app.userProfileDetail.surName;

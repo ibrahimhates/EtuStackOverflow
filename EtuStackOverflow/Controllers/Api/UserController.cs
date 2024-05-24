@@ -35,5 +35,13 @@ namespace EtuStackOverflow.Controllers.Api
 
             return CreateActionResultInstance(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUser([FromQuery] int pageNumber)
+        {
+            var result = await _userService.AllUserWithPaggingAsync(pageNumber);
+
+            return CreateActionResultInstance(result);
+        }
     }
 }

@@ -2,7 +2,7 @@
 {
     public record UserListDto(
             int Id,
-            int FullName,
+            string FullName,
             byte[]? ProfilePhoto,
             string UserName
         );
