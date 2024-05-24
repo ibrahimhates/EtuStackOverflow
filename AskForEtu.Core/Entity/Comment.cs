@@ -14,6 +14,7 @@ namespace AskForEtu.Core.Entity
         ICollection<DisLike> DisLikes { get; set; }
         ICollection<User> Reports { get; set; }
         public User User { get; set; }
+        public Question Question { get; set; }
 
     }
 }

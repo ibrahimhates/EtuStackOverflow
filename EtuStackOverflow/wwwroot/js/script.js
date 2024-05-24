@@ -1,6 +1,6 @@
 import { getCookie, deleteCookie } from './cookieManager.js';
 import { getUserProfileDetail, updateUserProfileDetail, getAllUsers } from './data/user.js';
-import { getAllQuestionWithPage } from './data/question.js';
+import { getAllQuestionWithPage, createQuestion, getOneQuestion } from './data/question.js';
 
 new Vue({
     el: "#baseBody",
@@ -26,6 +26,19 @@ new Vue({
         },
         userList:[],
         questions: [],
+        question: {
+            id:0,
+            profilePhoto: [],
+            userName: "",
+            createdDate: "",
+            title: "",
+            content: "",
+            comments:[]
+        },
+        questionCreate: {
+            title:"",
+            content:""
+        },
         pagging: {
             currentPage: 1,
             totalPage: 0,
@@ -62,7 +75,10 @@ new Vue({
                     .catch(() => this.isLoading = false)
             }
             if (this.$refs.questionDetail) {
-
+                this.isLoading = true;
+                getOneQuestion(this)
+                    .then(() => this.isLoading = false)
+                    .catch(() => this.isLoading = false)
             }
             if (this.$refs.userPageList) {
                 this.isLoading = true;
@@ -154,6 +170,23 @@ new Vue({
 
             reader.readAsArrayBuffer(file);
             console.log(app.userProfileDetailEdit.profilePhoto);
+        },
+        createQuestionEvent() {
+            this.isLoading = true;
+            createQuestion(this)
+                .then(() => {
+                    this.isLoading = false;
+                    window.location.reload();
+                }).catch(err => {
+                    if (err.response.status == 401) {
+                        deleteCookie("accessToken");
+                        window.location.reload();
+                        return;
+                    }
+                    this.isLoading = false;
+                    this.isError = true;
+                    this.errorMessage = err.response.data.messages[0];
+                })
         },
         goToPage(page) {
             if (page === '...') return;

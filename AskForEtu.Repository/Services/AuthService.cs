@@ -73,19 +73,19 @@ namespace AskForEtu.Repository.Services
                 if (user is not User)
                 {
                     statusCode = StatusCodes.Status404NotFound;
-                    throw new InvalidDataException($"User could not found. ");
+                    throw new InvalidDataException($"Kullanıcı bulunamadı.");
                 }
 
                 if (!_passwordHasher.Verify(user.PasswordHash, loginDto.password))
                 {
                     statusCode = StatusCodes.Status401Unauthorized;
-                    throw new InvalidDataException($"User password does not matching. {user.Email}");
+                    throw new InvalidDataException($"Kullanıcı adı ya da şifre hatalı. {user.Email}");
                 }
 
                 if (!user.VerifyEmail)
                 {
                     statusCode = StatusCodes.Status401Unauthorized;
-                    throw new InvalidDataException("Pending email verification. Please verify your email address");
+                    throw new InvalidDataException("Email doğrulaması yapılmadı. Lütfen email adresinizi doğrulayın.");
                 }
 
 
@@ -114,7 +114,7 @@ namespace AskForEtu.Repository.Services
             {
                 _logger.LogWarning(err.Message);
                 return Response<TokenDto>
-                    .Fail(err.Message, statusCode);
+                    .Fail(err.Message.Split(".")[0], statusCode);
             }
             catch (Exception err)
             {

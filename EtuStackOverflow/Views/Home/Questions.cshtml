@@ -97,7 +97,7 @@
                             <div class="col-md-3">
                                 <div class="row d-flex h-100 align-items-center">
                                     <div class="col-md-12">
-                                        <button class="btn btn-info" data-toggle="modal" data-target="#askQuestionModal">Soru Sor</button>
+                                        <button v-if="isLogin" class="btn btn-info" data-toggle="modal" data-target="#askQuestionModal">Soru Sor</button>
                                         <div class="modal fade" id="askQuestionModal">
                                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                 <div class="modal-content">
@@ -108,27 +108,37 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <form>
+                                                        <form v-on:submit.prevent="createQuestionEvent()">
+                                                            <div class="col-md-12 form-group">
+                                                                <div v-if="isError" class="alert alert-danger">
+                                                                    {{errorMessage}}
+                                                                </div>
+                                                            </div>
                                                             <div class="row">
                                                                 <div class="col-md-12 form-group">
                                                                     <label for="questionTitle" class="text-dark fw-bold">Question Title</label>
                                                                     <input type="text"
                                                                            required
+                                                                           v-model="questionCreate.title"
                                                                            name="questionTitle"
                                                                            class="form-control rounded"
                                                                            placeholder="Question Title">
                                                                 </div>
                                                                 <div class="col-md-12 form-group">
                                                                     <label for="content" class="text-dark fw-bold">Content</label>
-                                                                    <textarea class="form-control h-150px" rows="6" name="content"></textarea>
+                                                                    <textarea required class="form-control h-150px" rows="6"
+                                                                              v-model="questionCreate.content" name="content"></textarea>
                                                                 </div>
                                                             </div>
+                                                            <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+                                                            <button class="btn btn-info submit">
+                                                                <span v-if="!isLoading">Soru Sor</span>
+                                                                <span v-if="isLoading" class="d-flex justify-content-center align-items-center">
+                                                                    Lütfen bekleyiniz...
+                                                                    <div class="custom-spinner"></div>
+                                                                </span>
+                                                            </button>
                                                         </form>
-
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-info">Ask</button>
                                                     </div>
                                                 </div>
                                             </div>

@@ -22,6 +22,12 @@ namespace AskForEtu.Core.Map
             CreateMap<Question, QuestionListDto>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
                 .ForMember(dest => dest.ProfilePhoto, opt => opt.MapFrom(src => src.User.ProfilePhoto));
+
+            CreateMap<Question, QuestionDetailDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.ProfilePhoto, opt => opt.MapFrom(src => src.User.ProfilePhoto));
+
+            CreateMap<CreateQuestionDto,Question>();
         }
     }
 }

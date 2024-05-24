@@ -120,5 +120,10 @@ namespace AskForEtu.Repository.Services
                 return Response<List<UserListDto>>.Fail("Bir seyler ters gitti.", 500);
             }
         }
+
+        public Task<Response<UserProfileDto>> GetOneUserDetailAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
