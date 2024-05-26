@@ -151,23 +151,35 @@
         <div class="card">
             <div class="card-header d-flex justify-content-center align-items-center">
                 <h3 class="card-title">
-                    Your Questions
+                    Sorularim
                 </h3>
             </div>
             <div class="card-body">
-                <div class="media media-reply pb-2" @* v-for="(question) in profileQuestionData" :key="question.id" *@>
+                <div class="media media-reply pb-2" v-for="(question) in userProfileDetail.questions" :key="question.id">
                     <div class="media-body">
-                        <div class="d-sm-flex justify-content-between mb-2">
-                            <div>
-                                <h5 class="mb-sm-0"> Bilgisayar bozuldu</h5>
+                        <div type="button" v-on:click="changeLocationRoute('/questions/'+question.id)">
+                            <div class="d-sm-flex justify-content-between mb-2">
+                                <div>
+                                    <h5 class="mb-sm-0"> {{question.title}}</h5>
+                                </div>
+                                <div>
+                                    <small class="text-muted ml-3"> {{timeSince(question.createdDate)}}</small>
+                                </div>
                             </div>
-                            <div>
-                                <small class="text-muted ml-3"> 2 saat once</small>
+                            <p>
+                                {{question.content}}
+                            </p>
+                        </div>
+                        <div class="basic-dropdown">
+                            <!-- Default dropright button -->
+                            <div class="btn-group dropright d-flex justify-content-end">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class='far fa-edit'></i></button>
+                                <div class="dropdown-menu">
+                                    <span type="button" class="dropdown-item" v-on:click="deleteQuestionEvent(question.id)">Sil</span>
+                                    <span type="button" class="dropdown-item" >Cozuldu Isaretle</span>
+                                </div>
                             </div>
                         </div>
-                        <p>
-                            Bilgisayar uctu gitti
-                        </p>
                     </div>
                 </div>
             </div>
@@ -177,31 +189,38 @@
         <div class="card">
             <div class="card-header d-flex justify-content-center align-items-center">
                 <h3 class="card-title">
-                    Your Interactions
+                    Etkilesimlerim
                 </h3>
             </div>
             <div class="card-body">
-                <div class="media media-reply pb-2" @* v-for="(comment, index) in profileInteractionData" :key="index" *@>
-                    <img class="mr-3 circle-rounded" @* v-bind:src="'/images/avatar/' + comment.profilePicture + '.jpg'" *@ width="50" height="50" alt="Generic placeholder image">
-                    <div class="media-body">
+                <div class="media media-reply pb-2" v-for="comment in userProfileDetail.interactions" :key="comment.id">
+                    <img v-if="comment.profilePhoto.length > 0" class="rounded-circle" v-bind:src="getProfilePhoto(comment.profilePhoto)" width="50" height="50" alt="">
+                    <span v-if="comment.profilePhoto.length === 0"
+                          class="bg-light text-danger rounded-circle fs-1 fw-bold d-flex justify-content-center align-items-center" style="width: 50px;height: 50px;">
+                        {{comment.userName.charAt(0)}}
+                    </span>
+                    <div class="media-body ml-2">
                         <div class="d-sm-flex justify-content-between mb-2">
-                            <h5 class="mb-sm-0">Ibrahim <small class="text-muted ml-3">2 dk once</small></h5>
+                            <h5 class="mb-sm-0">{{comment.userName}} <small class="text-muted ml-3">{{timeSince(comment.createdDate)}}</small></h5>
                             <div class="media-reply__link d-flex justify-content-around">
                                 <div class="d-flex justify-content-center align-items-center mr-3">
-                                    <span>2</span>
+                                    <span>{{comment.likeCount}}</span>
                                     <button class="btn btn-transparent p-0 ml-1" @* v-on:click="like(index)" *@><i class="fa fa-thumbs-up"></i></button>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mr-3">
-                                    <span>3</span>
+                                    <span>{{comment.disLikeCount}}</span>
                                     <button class="btn btn-transparent p-0 ml-1" @* v-on:click="disLike(index)" *@><i class="fa fa-thumbs-down"></i></button>
                                 </div>
                                 <button class="btn btn-transparent text-dark font-weight-bold p-0 ml-2">Report</button>
                             </div>
                         </div>
-                        <p>O oyle olmaz kardesim gel bak</p>
+                        <div type="button" v-on:click="changeLocationRoute('/questions/'+comment.questionId)">
+                        <p>{{comment.content}}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </div>

@@ -133,6 +133,18 @@ namespace AskForEtu.Repository.Services
                     throw new InvalidDataException("Sifreler uyusmuyor!");
                 }
 
+                var userIsExist = await _userRepository.GetAll(false).IgnoreQueryFilters().AnyAsync(x => x.UserName == registerDto.UserName);
+                if (userIsExist)
+                {
+                    throw new InvalidDataException("Kullanici adi zaten kullaniliyor!");
+                }
+
+                userIsExist = await _userRepository.GetAll(false).IgnoreQueryFilters().AnyAsync(x => x.Email == registerDto.Email);
+                if (userIsExist)
+                {
+                    throw new InvalidDataException("Email adresi zaten kullaniliyor!");
+                }
+
                 var facultyIsExist = await _facultRepository.AnyAsync(x => x.Id == registerDto.FacultyId);
                 if (!facultyIsExist)
                 {
@@ -153,6 +165,10 @@ namespace AskForEtu.Repository.Services
 
                 var confirmationLink = GenerateLink(emailVerifyToken, context);
 
+                await _userRepository.CreateAsync(user);
+
+                await _unitOfWork.SaveAsync();
+
                 try
                 {
                     var template = new EmailSendTemplate()
@@ -168,10 +184,6 @@ namespace AskForEtu.Repository.Services
                 {
                     throw;
                 }
-
-                await _userRepository.CreateAsync(user);
-
-                await _unitOfWork.SaveAsync();
 
                 return Response<NoContent>.Success("Kayit olma islemi tamamlandi", 202);
             }
@@ -205,14 +217,14 @@ namespace AskForEtu.Repository.Services
                     .GetByCondition(x => x.UserId == user.Id, false)
                     .FirstOrDefaultAsync();
 
-                if (pswReset is not null && pswReset.ExpiresDate > DateTime.UtcNow)
+                if (pswReset is not null && pswReset.ExpiresDate > DateTime.Now)
                 {
                     statusCode = StatusCodes.Status400BadRequest;
                     throw new InvalidDataException("Henuz yeni kod isteyemezsin");
                 }
 
                 var resetCode = GenerateResetCode();
-                var expiresDate = DateTime.UtcNow.AddMinutes(3);
+                var expiresDate = DateTime.Now.AddMinutes(3);
                 var refCode = GenerateReferansCode();
 
                 if (pswReset is null)
@@ -294,7 +306,7 @@ namespace AskForEtu.Repository.Services
                     throw new InvalidDataException("Sifirlama kodu bulunamdi.");
                 }
 
-                if (pswReset.ExpiresDate < DateTime.UtcNow)
+                if (pswReset.ExpiresDate < DateTime.Now)
                 {
                     statusCode = 400;
                     throw new InvalidDataException("Sifirlama kodunun zamani bitti. Lutfen yeni kod alin.");
@@ -349,7 +361,7 @@ namespace AskForEtu.Repository.Services
                     .FirstOrDefaultAsync();
 
                 if (pswReset is null
-                    || pswReset.ExpiresDate < DateTime.UtcNow
+                    || pswReset.ExpiresDate < DateTime.Now
                     || !pswReset.AuthField.Equals(resetRequest.token))
                 {
                     statusCode = 400;

@@ -5,7 +5,7 @@
 <div class="row d-flex justify-content-center" ref="questionDetail">
     <div class="col-md-6">
         <div class="card" v-if="(question.id > 0)&&!isLoading">
-            <div  class="d-flex justify-content-between align-items-center card-header">
+            <div class="d-flex justify-content-between align-items-center card-header">
                 <div class="justify-content-start">
                     <img v-if="question.profilePhoto.length !== 0" v-bind:src="getProfilePhoto(question.profilePhoto)" class="rounded-circle" width="50" height="50">
                     <span v-if="question.profilePhoto.length === 0"
@@ -32,24 +32,52 @@
                         {{question.content}}
                     </h7>
                 </div>
-                <div class="media media-reply " v-for="comment in question.comments">
-                    <img class="mr-3 circle-rounded" src="/images/avatar/1.jpg" width="50" height="50" alt="Generic placeholder image">
+                <div class="media media-reply">
                     <div class="media-body">
+                        <form v-on:submit.prevent="createCommentEvent()">
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label for="content" class="text-dark fw-bold">YORUM ICERIGI</label>
+                                    <textarea required class="form-control h-150px" rows="3"
+                                              v-model="commentCreate.content" name="content"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 d-flex justify-content-end">
+                                    <button class="btn btn-info submit">
+                                        <span v-if="!isLoadingForNewComment">Yorum Yap</span>
+                                        <span v-if="isLoadingForNewComment" class="d-flex justify-content-center align-items-center">
+                                            Yorum Yapiliyor...
+                                            <div class="custom-spinner"></div>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="media media-reply " v-for="comment in question.comments">
+                    <img v-if="comment.profilePhoto.length !== 0" v-bind:src="getProfilePhoto(comment.profilePhoto)" class="rounded-circle" width="30" height="30">
+                    <span v-if="comment.profilePhoto.length === 0"
+                          class="bg-light text-danger rounded-circle fs-5 fw-bold d-flex justify-content-center align-items-center" style="width: 30px;height: 30px;">
+                        {{comment.userName.toUpperCase().charAt(0)}}
+                    </span>
+                    <div class="media-body ms-1">
                         <div class="d-sm-flex justify-content-between mb-2">
-                            <h5 class="mb-sm-0">Habililo <small class="text-muted ml-3">10 min ago</small></h5>
+                            <h5 class="mb-sm-0">{{comment.userName}}<small class="text-muted ml-3">{{timeSince(comment.createdDate)}}</small></h5>
                             <div class="media-reply__link d-flex justify-content-around">
                                 <div class="d-flex justify-content-center align-items-center mr-3">
-                                    <span>3</span>
+                                    <span>{{comment.likeCount}}</span>
                                     <button class="btn btn-transparent p-0 ml-1" v-on:click="like(index)"><i class="fa fa-thumbs-up"></i></button>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mr-3">
-                                    <span>50</span>
+                                    <span>{{comment.disLikeCount}}</span>
                                     <button class="btn btn-transparent p-0 ml-1" v-on:click="disLike(index)"><i class="fa fa-thumbs-down"></i></button>
                                 </div>
                                 <button class="btn btn-transparent text-dark font-weight-bold p-0 ml-2">Report</button>
                             </div>
                         </div>
-                        <span>Sen de onu elle</span>
+                        <span>{{comment.content}}</span>
                     </div>
                 </div>
             </div>

@@ -22,6 +22,7 @@ namespace AskForEtu.Core.Entity
         public Faculty Faculty { get; set; }
         public Major Major { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<Report> Reports{ get; set; }
         public ICollection<Question> Questions { get; set; }
         public ICollection<Like> Likes { get; set; }
         public ICollection<DisLike> DisLikes { get; set; }

@@ -25,6 +25,22 @@ namespace AskForEtu.Repository.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email).IsUnique();
+            
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UserName).IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(u => !u.IsDeleted && u.IsActive);
+
+            modelBuilder.Entity<Question>()
+                .HasQueryFilter(u => !u.IsDeleted);
+
+            modelBuilder.Entity<Comment>()
+                .HasQueryFilter(u => !u.IsDeleted);
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -41,7 +57,7 @@ namespace AskForEtu.Repository.Context
 
             foreach (var entity in entities)
             {
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now;
 
                 if (entity.State == EntityState.Added)
                 {

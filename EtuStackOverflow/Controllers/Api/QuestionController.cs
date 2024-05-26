@@ -52,6 +52,14 @@ namespace EtuStackOverflow.Controllers.Api
             return CreateActionResultInstance(result);
         }
 
+        [HttpDelete("{id:long}"),Authorize]
+        public async Task<IActionResult> DeleteQuestion([FromRoute]long id)
+        {
+            var result = await _questionService.DeleteQuestionAsync(id);
+
+            return CreateActionResultInstance(result);
+        }
+
 
         [HttpGet("interactions/{id:int}")]
         public IActionResult AllInteractionForUser(int id)

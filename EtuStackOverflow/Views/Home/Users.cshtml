@@ -14,7 +14,7 @@
                            aria-label="Search Dashboard"
                            v-model="searchTerm">
                     <div class="input-group-append">
-                        <a class="btn-light rounded" v-on:click="getAllUserWithSearchTerm()">
+                        <a class="btn-light rounded" v-on:click="getAllUsersEvent()">
                             <span class="input-group-text bg-transparent border-0 fs-4" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>
                         </a>
                     </div>
@@ -37,13 +37,13 @@
             </div>
         </div>
     </div>
-    <div v-if="!(userList.length > 0)&&(isLoading)" class="d-flex justify-content-center">
+    <div v-if="!(userList.length > 0)&&(isLoading)" class="d-flex justify-content-center mt-4 mb-4">
         <div class="">
-            <div class="custom-question-spinner">
+            <div class="custom-user-spinner">
             </div>
         </div>
     </div>
-    <div v-if="!(userList.length > 0)&&(!isLoading)" class="d-flex justify-content-center">
+    <div v-if="!(userList.length > 0)&&(!isLoading)" class="d-flex justify-content-center mt-4 mb-4">
         <div class="fw-bold fs-5">
             <span>
                 Kullanıcı bulunamadı...

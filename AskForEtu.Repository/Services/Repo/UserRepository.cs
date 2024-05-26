@@ -3,7 +3,6 @@ using AskForEtu.Core.Services.Repo;
 using AskForEtu.Repository.Context;
 using AskForEtu.Repository.Services.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 namespace AskForEtu.Repository.Services.Repo
 {
@@ -17,6 +16,7 @@ namespace AskForEtu.Repository.Services.Repo
         {
             var user = await GetByCondition(x => x.Email == userNameOrEmail
             || x.UserName == userNameOrEmail, trackChanges)
+                .IgnoreQueryFilters()
                 .Include(x => x.Token)
                 .FirstOrDefaultAsync();
 
@@ -35,6 +35,9 @@ namespace AskForEtu.Repository.Services.Repo
         {
             var user = await GetByCondition(x => x.Id == id, trackChanges)
                 .Include(x => x.Comments)
+                .Include(x => x.Questions)
+                    .ThenInclude(x => x.Comments)
+                        .ThenInclude(x => x.User)
                 .FirstOrDefaultAsync();
 
             return user;

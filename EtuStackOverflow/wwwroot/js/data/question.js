@@ -44,8 +44,57 @@ export const getOneQuestion = async (app) => {
     try {
         const response = await axios.get(`/api/questions/${routeId}`)
         app.question = response.data.data;
+        app.commentCreate.questionId = app.question.id;
+        app.commentCreate.content = "";
         console.log(app.question)
     } catch (err) {
         console.error('Birseyler ters gitti')
+    }
+}
+
+export const deleteQuestion = async (app,deletedId) => {
+    const tokenCookieValue = getCookie("accessToken")
+
+    if (tokenCookieValue === "") {
+        app.isLogin = false;
+        deleteCookie("accessToken");
+        window.location.pathname = "/";
+        return;
+    } else {
+        app.token = tokenCookieValue;
+    }
+
+    try {
+        await axios.delete(`/api/questions/${deletedId}`,
+            { headers: { 'Authorization': 'Bearer ' + app.token } });
+        window.location.reload();
+    } catch (err) {
+        throw err;
+    }
+
+}
+
+export const createComment = async (app) => {
+    const tokenCookieValue = getCookie("accessToken")
+
+    if (tokenCookieValue === "") {
+        app.isLogin = false;
+        deleteCookie("accessToken");
+        window.location.pathname = "/auth/login";
+        return;
+    } else {
+        app.token = tokenCookieValue;
+    }
+
+    try {
+        await axios.post(`/api/comments`, app.commentCreate,
+            { headers: { 'Authorization': 'Bearer ' + app.token } });
+        await getOneQuestion(app);
+    } catch (err) {
+        if (err.response.status == 401) {
+            deleteCookie("accessToken");
+            window.location.href += "/auth/login";
+        }
+        throw err;
     }
 }

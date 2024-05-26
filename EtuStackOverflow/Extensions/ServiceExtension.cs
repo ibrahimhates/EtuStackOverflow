@@ -36,6 +36,7 @@ namespace EtuStackOverflow.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<ICommentService, CommentService>();
         }
 
         public static void ConfigureRepos(this IServiceCollection services)

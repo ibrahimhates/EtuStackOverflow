@@ -67,6 +67,36 @@ public class QuestionService : IQuestionService
         }
     }
 
+    public async Task<Response<NoContent>> DeleteQuestionAsync(long id)
+    {
+        try
+        {
+            var deletedQuestion = await _questionRepository.GetByIdAsync(id);
+
+            if (deletedQuestion == null)
+            {
+                throw new InvalidDataException("Soru bulunamadı");
+            }
+
+            deletedQuestion.IsDeleted = true;
+
+            _questionRepository.Update(deletedQuestion);
+            await _unitOfWork.SaveAsync();
+
+            return Response<NoContent>.Success("Soru silindi",200);
+        }
+        catch (InvalidDataException err)
+        {
+            _logger.LogError(err.Message);
+            return Response<NoContent>.Fail(err.Message, 404);
+        }
+        catch (Exception err)
+        {
+            _logger.LogError(err.Message);
+            return Response<NoContent>.Fail("Bir seyler ters gitti.", 500);
+        }
+    }
+
     public async Task<Response<List<QuestionListDto>>> GetAllQuestionWithPaggingAsync(int pageNumber)
     {
         try
@@ -106,6 +136,8 @@ public class QuestionService : IQuestionService
             var question = await _questionRepository
                 .GetAll(false)
                 .Include (x => x.User)
+                .Include(x => x.Comments.OrderByDescending(c => c.CreatedDate))
+                    .ThenInclude(x => x.User)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (question is null)
