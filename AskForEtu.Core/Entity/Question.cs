@@ -1,4 +1,5 @@
 ﻿using AskForEtu.Core.Entity.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace AskForEtu.Core.Entity
 {
@@ -10,5 +11,6 @@ namespace AskForEtu.Core.Entity
         public string Content { get; set; }
         public bool IsSolved { get; set; }
         public User User { get; set; }
+        public List<Comment> Comments{ get; set; }
     }
 }

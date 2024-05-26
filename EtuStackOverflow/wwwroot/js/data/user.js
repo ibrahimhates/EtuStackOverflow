@@ -17,13 +17,12 @@ export const getUserProfileDetail = async (app) => {
     if (data) {
         app.userProfileDetail = JSON.parse(data);
         fillEditProfile(app);
-        return;
     }
 
     try {
         const response = await axios.get(`/api/users/profile-detail`, { headers: { 'Authorization': 'Bearer ' + app.token } });
         app.userProfileDetail = response.data.data;
-
+        console.log(app.userProfileDetail)
         //save localstorge like cache data
         localStorage.setItem('userProfileDetail', JSON.stringify(app.userProfileDetail));
 
@@ -75,7 +74,7 @@ export const updateUserProfileDetail = async (app) => {
 
 export const getAllUsers = async (app) => {
     try {
-        const response = await axios.get(`/api/users?pageNumber=${app.pagging.currentPage}`);
+        const response = await axios.get(`/api/users?pageNumber=${app.pagging.currentPage}&&searchTerm=${app.searchTerm}`);
         app.userList = response.data.data;
         app.pagging = response.data.pagination;
     } catch (error) {

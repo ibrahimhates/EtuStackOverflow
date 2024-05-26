@@ -37,9 +37,9 @@ namespace EtuStackOverflow.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUser([FromQuery] int pageNumber)
+        public async Task<IActionResult> GetAllUser([FromQuery] int pageNumber, [FromQuery] string? searchTerm)
         {
-            var result = await _userService.AllUserWithPaggingAsync(pageNumber);
+            var result = await _userService.AllUserWithPaggingAsync(pageNumber,searchTerm);
 
             return CreateActionResultInstance(result);
         }

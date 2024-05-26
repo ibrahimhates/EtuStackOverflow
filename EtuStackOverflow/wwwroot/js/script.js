@@ -1,6 +1,6 @@
 import { getCookie, deleteCookie } from './cookieManager.js';
 import { getUserProfileDetail, updateUserProfileDetail, getAllUsers } from './data/user.js';
-import { getAllQuestionWithPage } from './data/question.js';
+import { getAllQuestionWithPage, createQuestion,deleteQuestion, getOneQuestion, createComment } from './data/question.js';
 
 new Vue({
     el: "#baseBody",
@@ -15,7 +15,9 @@ new Vue({
             verifyEmail: false,
             userName: "",
             commentCount: 0,
-            interactionCount: 0
+            interactionCount: 0,
+            interactions: [],
+            questions: []
         },
         userProfileDetailEdit: {
             name: "",
@@ -26,6 +28,23 @@ new Vue({
         },
         userList:[],
         questions: [],
+        question: {
+            id:0,
+            profilePhoto: [],
+            userName: "",
+            createdDate: "",
+            title: "",
+            content: "",
+            comments:[]
+        },
+        questionCreate: {
+            title:"",
+            content:""
+        },
+        commentCreate: {
+            content: "",
+            questionId: 0
+        },
         pagging: {
             currentPage: 1,
             totalPage: 0,
@@ -38,6 +57,7 @@ new Vue({
         token: "",
         isLogin: false,
         isLoading: false,
+        isLoadingForNewComment: false,
         errorMessage: "",
         isError: false
     },
@@ -62,16 +82,13 @@ new Vue({
                     .catch(() => this.isLoading = false)
             }
             if (this.$refs.questionDetail) {
-
+                this.isLoading = true;
+                getOneQuestion(this)
+                    .then(() => this.isLoading = false)
+                    .catch(() => this.isLoading = false)
             }
             if (this.$refs.userPageList) {
-                this.isLoading = true;
-                getAllUsers(this)
-                    .then(() => {
-                        this.isLoading = false;
-                    }).catch(err => {
-                        this.isLoading = false;
-                    })
+                this.getAllUsersEvent();
             }
             if (this.$refs.profileList) {
                 getUserProfileDetail(this);
@@ -155,6 +172,36 @@ new Vue({
             reader.readAsArrayBuffer(file);
             console.log(app.userProfileDetailEdit.profilePhoto);
         },
+        createQuestionEvent() {
+            this.isLoading = true;
+            createQuestion(this)
+                .then(() => {
+                    this.isLoading = false;
+                    window.location.reload();
+                }).catch(err => {
+                    if (err.response.status == 401) {
+                        deleteCookie("accessToken");
+                        window.location.reload();
+                        return;
+                    }
+                    this.isLoading = false;
+                    this.isError = true;
+                    this.errorMessage = err.response.data.messages[0];
+                })
+        },
+        deleteQuestionEvent(deletedId) {
+            this.userProfileDetail.questions.filter(question => question.id !== deletedId)
+            deleteQuestion(this, deletedId);
+        },
+        createCommentEvent() {
+            this.isLoadingForNewComment = true;
+            createComment(this)
+                .then(() => {
+                    this.isLoadingForNewComment = false;
+                }).catch(err => {
+                    this.isLoadingForNewComment = false;
+                })
+        },
         goToPage(page) {
             if (page === '...') return;
             if (page < 1 || page > this.pagging.totalPage) return;
@@ -164,25 +211,15 @@ new Vue({
                 .then(() => this.isLoading = false)
                 .catch(() => this.isLoading = false)
         },
-        changeLocationRoute(id) {
-            window.location.href += `/${id}`
+        changeLocationRoute(route) {
+            window.location.href = `${route}`
         },
-        getAllUserWithSearchTerm() {
-            if (this.searchTerm === "") {
-                this.isLoading = true;
-                getAllUsers(this)
-                    .then(() => {
-                        this.isLoading = false;
-                    }).catch(err => {
-                        this.isLoading = false;
-                    })
-                return;
-            }
-            axios.get(`/api/users/filter?searchTerm=${this.searchTerm}`)
-                .then(response => {
-                    this.userData = response.data;
-                })
-                .catch(error => console.error('Birseyler ters gitti'));
+        getAllUsersEvent() {
+            this.userList = [];
+            this.isLoading = true;
+            getAllUsers(this)
+                .then(() => this.isLoading = false)
+                .catch(() => this.isLoading = false)
         },
         getDataForQuestion(userId) {
             axios.get(`/api/Questions/allForUser/${userId}`)

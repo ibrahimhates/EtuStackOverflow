@@ -1,5 +1,6 @@
 ﻿using AskForEtu.Core.Dto.Request;
 using AskForEtu.Core.Dto.Response;
+using AskForEtu.Core.Entity;
 using AskForEtu.Core.Pagination;
 using AskForEtu.Core.ResultStructure;
 using AskForEtu.Core.ResultStructure.Dto;
@@ -44,6 +45,17 @@ namespace AskForEtu.Repository.Services
                     throw new InvalidDataException("Kullanici bulunamadi");
                 }
                 var userDto = _mapper.Map<UserProfileDto>(user);
+
+                userDto.InteractionCount = user.Questions.Sum(q => q.Comments.Count());
+                
+                userDto.Questions = _mapper.Map<List<QuestionForProfileDto>>(user.Questions.Take(5));
+               
+                var interactionsComment = user.Questions
+                    .SelectMany(q => q.Comments)
+                    .OrderByDescending(c => c.CreatedDate) 
+                    .Take(5); 
+
+                userDto.Interactions = _mapper.Map<List<CommentDto>>(interactionsComment);
 
                 return Response<UserProfileDto>.Success(userDto, statusCode);
             }
@@ -91,7 +103,7 @@ namespace AskForEtu.Repository.Services
             }
         }
 
-        public async Task<Response<List<UserListDto>>> AllUserWithPaggingAsync(int pageNumber)
+        public async Task<Response<List<UserListDto>>> AllUserWithPaggingAsync(int pageNumber, string? searchTerm)
         {
             try
             {
@@ -103,9 +115,17 @@ namespace AskForEtu.Repository.Services
                     CurrentPage = pageNumber,
                 };
 
-                var userList = await _userRepository
-                    .GetAll(false)
-                        .Where(x => x.IsActive && !x.IsDeleted)
+                var query = _userRepository
+                    .GetAll(false);
+
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    query = query.Where(x => x.UserName.Contains(searchTerm)
+                    || x.Name.Contains(searchTerm)
+                    || x.SurName.Contains(searchTerm));
+                }
+
+                var userList = await query
                     .ToPagging(pageNumber, pagger.PageSize)
                     .OrderByDescending(x => x.CreatedDate)
                     .ToListAsync();

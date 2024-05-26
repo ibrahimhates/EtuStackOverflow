@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.8'
 
 services:
   etustackoverflow:
@@ -6,3 +6,30 @@ services:
     build:
       context: .
       dockerfile: EtuStackOverflow/Dockerfile
+    ports:
+      - "8080:8080"
+    restart: always
+
+
+  etusowf-db:
+    image: mysql:latest
+    container_name: etusowf-db
+    environment:
+        MYSQL_ROOT_PASSWORD: P@ssw0rd
+        MYSQL_DATABASE: EtuStackOverflowDB
+        MYSQL_USER: etu_user
+        MYSQL_PASSWORD: P@ssw0rd
+    ports:
+      - "3306:3306"
+    restart: always
+    networks:
+        - etu
+    hostname: "db"
+    volumes:
+        - mysqldata:/var/lib/mysql
+
+networks:
+  etu:
+
+volumes:
+  mysqldata:

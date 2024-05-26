@@ -63,10 +63,10 @@
                                         <input type="text" v-model="register.surName" class="form-control" placeholder="Soyad" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" v-model="register.userName" class="form-control" placeholder="Kullanici Adi" required>
+                                        <input type="email" v-model="register.email" class="form-control" placeholder="E-posta" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" v-model="register.email" class="form-control" placeholder="E-posta" required>
+                                        <input type="text" v-model="register.userName" class="form-control" placeholder="Kullanici Adi" required>
                                     </div>
                                     <div class="form-group">
                                         <input type="password" v-on:change="passWordMatchControl()" v-model="register.password" class="form-control" placeholder="Sifre" required>

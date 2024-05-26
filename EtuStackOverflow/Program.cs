@@ -6,8 +6,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.JwtSettings.json");
 builder.Configuration.AddJsonFile("appsettings.EmailSettings.json");
 
+// Environment'a göre uygun yapýlandýrma dosyasýný yükle
+var environmentName = builder.Environment.EnvironmentName;
+builder.Configuration.AddJsonFile($"appsettings.{environmentName}.json", optional: false);
+
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
+
 builder.Services.AddSwaggerGen();
 
 // dbContext yapilandirilmasi connection string baglantisi
