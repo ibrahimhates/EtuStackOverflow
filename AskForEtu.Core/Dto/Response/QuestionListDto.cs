@@ -3,7 +3,8 @@ public record QuestionListDto(
         long Id,
         int UserId,
         string Title,
-        string Content
+        string Content,
+        bool IsSolved
     )
 {
     public DateTime CreatedDate { get; set; }

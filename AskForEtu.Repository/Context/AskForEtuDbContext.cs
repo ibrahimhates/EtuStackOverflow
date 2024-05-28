@@ -8,16 +8,16 @@ namespace AskForEtu.Repository.Context
 {
     public class AskForEtuDbContext : DbContext
     {
-        public AskForEtuDbContext(DbContextOptions<AskForEtuDbContext> options) 
-            : base(options){}
+        public AskForEtuDbContext(DbContextOptions<AskForEtuDbContext> options)
+            : base(options) { }
 
         DbSet<User> Users { get; set; }
         DbSet<Token> Tokens { get; set; }
         DbSet<PasswordReset> PasswordResets { get; set; }
         DbSet<Question> Questions { get; set; }
-        DbSet<Comment> Comments{ get; set; }
-        DbSet<DisLike> DisLikes  { get; set; }
-        DbSet<Like> Likes{ get; set; }
+        DbSet<Comment> Comments { get; set; }
+        DbSet<DisLike> DisLikes { get; set; }
+        DbSet<Like> Likes { get; set; }
         DbSet<Major> Majors { get; set; }
         DbSet<Faculty> Faculties { get; set; }
         DbSet<Report> Reports { get; set; }
@@ -28,7 +28,7 @@ namespace AskForEtu.Repository.Context
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email).IsUnique();
-            
+
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.UserName).IsUnique();
 
@@ -40,6 +40,63 @@ namespace AskForEtu.Repository.Context
 
             modelBuilder.Entity<Comment>()
                 .HasQueryFilter(u => !u.IsDeleted);
+
+            var faculties = new List<Faculty>
+            {
+                new()
+                {
+                    Id = 1,
+                    Name = "Muhendislik Fakültesi",
+                    Majors = new List<Major>
+                    {
+                        new Major
+                        {
+                            Id = 1,
+                            Name = "Bilgisayar Mühendisliği"
+                        },
+                        new Major
+                        {
+                            Id = 2,
+                            Name = "Makine Mühendisliği"
+                        },
+                        new Major
+                        {
+                            Id = 3,
+                            Name = "Elektrik Elektronik Mühendisliği"
+                        },
+                        new Major
+                        {
+                            Id = 4,
+                            Name = "Endüstri Mühendisliği"
+                        }
+                    }
+                },
+                new()
+                {
+                    Id = 2,
+                    Name = "Edebiyat Fakültesi",
+                    Majors = new List<Major>
+                    {
+                        new Major
+                        {
+                            Id = 8,
+                            Name = "Türk Dili ve Edebiyatı"
+                        },
+                        new Major
+                        {
+                            Id = 9,
+                            Name = "İngiliz Dili ve Edebiyatı"
+                        },
+                        new Major
+                        {
+                            Id = 10,
+                            Name = "Psikoloji"
+                        }
+                    }
+                }
+            };
+
+            modelBuilder.Entity<Faculty>().HasData(faculties);
 
             base.OnModelCreating(modelBuilder);
         }

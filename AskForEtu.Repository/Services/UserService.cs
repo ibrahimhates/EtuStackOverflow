@@ -47,13 +47,13 @@ namespace AskForEtu.Repository.Services
                 var userDto = _mapper.Map<UserProfileDto>(user);
 
                 userDto.InteractionCount = user.Questions.Sum(q => q.Comments.Count());
-                
+
                 userDto.Questions = _mapper.Map<List<QuestionForProfileDto>>(user.Questions.Take(5));
-               
+
                 var interactionsComment = user.Questions
                     .SelectMany(q => q.Comments)
-                    .OrderByDescending(c => c.CreatedDate) 
-                    .Take(5); 
+                    .OrderByDescending(c => c.CreatedDate)
+                    .Take(5);
 
                 userDto.Interactions = _mapper.Map<List<CommentDto>>(interactionsComment);
 
@@ -141,9 +141,11 @@ namespace AskForEtu.Repository.Services
             }
         }
 
-        public Task<Response<UserProfileDto>> GetOneUserDetailAsync(int userId)
+        public async Task<Response<UserProfileDto>> GetOneUserDetailAsync(int userId)
         {
-            throw new NotImplementedException();
+            var user = await UserProfileDetailAsync(userId);
+
+            return user;
         }
     }
 }

@@ -166,9 +166,18 @@
                                 {{question.content}}
                             </h7>
                         </div>
-
-                        <div class="d-flex justify-content-end">
-                            <div class="d-flex align-items-center">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex align-items-center justify-content-start" v-if="question.isSolved">
+                                <div class="">
+                                    <span class="label label-success">Çözüldü</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-start" v-if="!question.isSolved">
+                                <div class="">
+                                    <span class=""></span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-end">
                                 <div class="">
                                     <img v-if="question.profilePhoto.length !== 0" v-bind:src="getProfilePhoto(question.profilePhoto)" class="rounded-circle" width="30" height="30">
                                     <span v-if="!(question.profilePhoto.length !== 0)"
@@ -177,7 +186,7 @@
                                     </span>
                                 </div>
                                 <div class="ml-2">
-                                    <a class="text-dark" href="/users">
+                                    <a class="text-dark" :href="'/users/'+question.userId">
                                         <span>{{question.userName}}</span>
                                     </a>
                                 </div>

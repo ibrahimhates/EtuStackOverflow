@@ -22,13 +22,10 @@ export const getUserProfileDetail = async (app) => {
     try {
         const response = await axios.get(`/api/users/profile-detail`, { headers: { 'Authorization': 'Bearer ' + app.token } });
         app.userProfileDetail = response.data.data;
-        console.log(app.userProfileDetail)
         //save localstorge like cache data
         localStorage.setItem('userProfileDetail', JSON.stringify(app.userProfileDetail));
 
         fillEditProfile(app);
-
-        console.log(app.userProfileDetailEdit)
     } catch (error) {
         const statusCode = error.response.status;
         if (statusCode === 401) {
@@ -40,8 +37,26 @@ export const getUserProfileDetail = async (app) => {
     }
 }
 
+export const getUserProfileDetailById = async (app) => {
+    var routeId = window.location.href.split('/').reverse()[0];
+    const data = localStorage.getItem('userProfileDetail');
+    if (data) {
+        app.userProfileDetail = JSON.parse(data);
+    }
+    if (app.userProfileDetail.id == routeId){
+        window.location.pathname = "/profile";
+        throw new Error("Kendi profilinize giremezsiniz");
+    }
+    console.log(app.question)
+    try {
+        const response = await axios.get(`/api/users/${routeId}`)
+        app.anotherUsersProfileDetail = response.data.data;
+    } catch (err) {
+        console.error('Birseyler ters gitti',err);
+    }
+}
+
 export const updateUserProfileDetail = async (app) => {
-    localStorage.removeItem('userProfileDetail');
     const tokenCookieValue = getCookie("accessToken")
 
     if (tokenCookieValue === "") {
@@ -81,7 +96,6 @@ export const getAllUsers = async (app) => {
         throw error;
     }
 }
-
 function fillEditProfile(app) {
     app.userProfileDetailEdit.name = app.userProfileDetail.name;
     app.userProfileDetailEdit.surName = app.userProfileDetail.surName;

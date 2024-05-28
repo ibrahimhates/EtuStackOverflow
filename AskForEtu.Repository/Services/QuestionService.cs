@@ -10,6 +10,7 @@ using AskForEtu.Repository.UnitofWork;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.Xml;
 
 namespace AskForEtu.Repository.Services;
@@ -83,7 +84,7 @@ public class QuestionService : IQuestionService
             _questionRepository.Update(deletedQuestion);
             await _unitOfWork.SaveAsync();
 
-            return Response<NoContent>.Success("Soru silindi",200);
+            return Response<NoContent>.Success("Soru silindi", 200);
         }
         catch (InvalidDataException err)
         {
@@ -118,8 +119,6 @@ public class QuestionService : IQuestionService
 
             var questionsDto = _mapper.Map<List<QuestionListDto>>(questions);
 
-            questionsDto.ForEach(x => { x.CreatedDate = x.CreatedDate.AddHours(3); });
-
             return Response<List<QuestionListDto>>.Success(questionsDto, 200, pagger);
         }
         catch (Exception err)
@@ -129,13 +128,13 @@ public class QuestionService : IQuestionService
         }
     }
 
-    public async Task<Response<QuestionDetailDto>> GetOneQuestionDetailAsync(int id)
+    public async Task<Response<QuestionDetailDto>> GetOneQuestionDetailAsync(long id)
     {
         try
         {
             var question = await _questionRepository
                 .GetAll(false)
-                .Include (x => x.User)
+                .Include(x => x.User)
                 .Include(x => x.Comments.OrderByDescending(c => c.CreatedDate))
                     .ThenInclude(x => x.User)
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -145,11 +144,9 @@ public class QuestionService : IQuestionService
 
             var questionsDto = _mapper.Map<QuestionDetailDto>(question);
 
-            questionsDto.CreatedDate = questionsDto.CreatedDate.AddHours(3);
-
             return Response<QuestionDetailDto>.Success(questionsDto, 200);
         }
-        catch(InvalidDataException err)
+        catch (InvalidDataException err)
         {
             _logger.LogError(err.Message);
             return Response<QuestionDetailDto>.Fail(err.Message, 404);
@@ -158,6 +155,35 @@ public class QuestionService : IQuestionService
         {
             _logger.LogError(err.Message);
             return Response<QuestionDetailDto>.Fail("Bir seyler ters gitti.", 500);
+        }
+    }
+
+    public async Task<Response<NoContent>> MarkSolvedQuestionAsync(long id)
+    {
+        try
+        {
+            var question = await _questionRepository.GetByIdAsync(id);
+
+            if (question is null)
+                throw new InvalidDataException("Soru bulunamadı");
+
+            question.IsSolved = !question.IsSolved;
+
+            _questionRepository.Update(question);
+            await _unitOfWork.SaveAsync();
+
+            return Response<NoContent>.Success("Soru çözüldü", 200);
+
+        }
+        catch (InvalidDataException err)
+        {
+            _logger.LogError(err.Message);
+            return Response<NoContent>.Fail(err.Message, 404);
+        }
+        catch (Exception err)
+        {
+            _logger.LogError(err.Message);
+            return Response<NoContent>.Fail("Bir seyler ters gitti.", 500);
         }
     }
 }

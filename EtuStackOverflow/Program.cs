@@ -1,5 +1,6 @@
 using AskForEtu.Core.Map;
 using EtuStackOverflow.Extensions;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +8,39 @@ builder.Configuration.AddJsonFile("appsettings.JwtSettings.json");
 builder.Configuration.AddJsonFile("appsettings.EmailSettings.json");
 
 // Environment'a göre uygun yapýlandýrma dosyasýný yükle
-var environmentName = builder.Environment.EnvironmentName;
-builder.Configuration.AddJsonFile($"appsettings.{environmentName}.json", optional: false);
+var environment = builder.Environment.EnvironmentName;
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+if (environment.Equals("Development"))
+{
+    builder.Configuration.AddJsonFile($"appsettings.Development.json", true, true);
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(MyAllowSpecificOrigins, builder =>
+            builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+    });
+
+}
+else
+{
+    builder.Configuration.AddJsonFile($"appsettings.{environment}.json", optional: false, reloadOnChange: true);
+    builder.Services.AddLogging();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(name: MyAllowSpecificOrigins,
+                          policy =>
+                          {
+                              policy.AllowAnyHeader()
+                              .AllowAnyMethod()
+                              .WithOrigins("https://localhost:3000", "http://localhost:3000");
+                          });
+    });
+
+}
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
@@ -37,6 +69,11 @@ builder.Services.ConfigureJwtBearer(builder.Configuration);
 builder.Services.ConfigureEmailService();
 
 var app = builder.Build();
+
+if (environment == "Development" || string.IsNullOrEmpty(environment))
+    app.UseCors(MyAllowSpecificOrigins);
+
+app.AddMigration();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

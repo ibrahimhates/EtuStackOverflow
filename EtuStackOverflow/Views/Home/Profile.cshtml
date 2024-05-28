@@ -25,7 +25,7 @@
                                     <input v-on:change="uploadProfilePhoto($event)" type="file" id="fileInput" accept="image/png" style="display: none">
                                     <label for="fileInput">
                                         <div class="position-absolute top-25 start-25">
-                                            <i class='far fa-edit'></i>
+                                            <i class='fa fa-edit'></i>
                                         </div>
                                         <img v-if="userProfileDetailEdit.id!==0&&userProfileDetailEdit.profilePhoto!==''" class="rounded-circle" v-bind:src="getProfilePhoto(userProfileDetailEdit.profilePhoto)" width="120" height="120" alt="">
                                         <span v-if="!(userProfileDetailEdit.id!==0&&userProfileDetailEdit.profilePhoto.length !== 0)"
@@ -93,7 +93,7 @@
                     <div class="col-md-12">
                         <div class="d-flex justify-content-end">
                             <button class="btn btn-info text-white" data-toggle="modal" data-target="#editProfileModal">
-                                <i class='far fa-edit'></i>
+                                <i class='fa fa-edit'></i>
                             </button>
                         </div>
                         <div class="d-flex justify-content-center mb-4 mt-1">
@@ -170,13 +170,26 @@
                                 {{question.content}}
                             </p>
                         </div>
-                        <div class="basic-dropdown">
-                            <!-- Default dropright button -->
-                            <div class="btn-group dropright d-flex justify-content-end">
-                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class='far fa-edit'></i></button>
+                        <div class="basic-dropdown d-flex justify-content-between">
+                            <div class="d-flex justify-content-start align-items-center" v-if="question.isSolved">
+                                <div class="">
+                                    <span class="label label-success">Çözüldü</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-start align-items-center" v-if="!question.isSolved">
+                                <div class="">
+                                    <span class=""></span>
+                                </div>
+                            </div>
+                            <div class="btn-group dropright">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class='fa fa-edit'></i></button>
                                 <div class="dropdown-menu">
                                     <span type="button" class="dropdown-item" v-on:click="deleteQuestionEvent(question.id)">Sil</span>
-                                    <span type="button" class="dropdown-item" >Cozuldu Isaretle</span>
+                                    <span v-if="!question.isSolved" type="button" class="dropdown-item" v-on:click="markSolvedQuestionEvent(question.id)">
+                                        Çözüldü</span>
+                                    <span v-if="question.isSolved" type="button" class="dropdown-item" v-on:click="markSolvedQuestionEvent(question.id)">
+                                        Çözülmedi
+                                    </span>
                                 </div>
                             </div>
                         </div>

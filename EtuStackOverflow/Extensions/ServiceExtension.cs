@@ -23,7 +23,7 @@ namespace EtuStackOverflow.Extensions
     public static class ServiceExtension
     {
         public static void ConfigureDbContext(this IServiceCollection services,
-            IConfiguration configuration) 
+            IConfiguration configuration)
             => services.AddDbContext<AskForEtuDbContext>(options =>
             {
                 var connectionString = configuration.GetConnectionString("mySql");
@@ -56,7 +56,7 @@ namespace EtuStackOverflow.Extensions
             services.AddScoped<IPasswordHasher, PasswordHasher>();
         }
 
-        public static void ConfigureJwtBearer(this IServiceCollection services,IConfiguration configuration)
+        public static void ConfigureJwtBearer(this IServiceCollection services, IConfiguration configuration)
         {
             //services.ConfigureOptions<JwtBearerOptionsSetup>();
 
@@ -91,6 +91,15 @@ namespace EtuStackOverflow.Extensions
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddSingleton<ITaskQueue<EmailSendTemplate>, EmailTaskQueue>();
+        }
+
+        public static void AddMigration(this WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<AskForEtuDbContext>();
+            context.Database.MigrateAsync().Wait();
         }
     }
 }

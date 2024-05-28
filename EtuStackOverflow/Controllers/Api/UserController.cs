@@ -45,7 +45,7 @@ namespace EtuStackOverflow.Controllers.Api
         }
 
         [HttpGet("{userId:int}")]
-        public async Task<IActionResult> GetOneUser([FromQuery] int userId)
+        public async Task<IActionResult> GetOneUser([FromRoute] int userId)
         {
             var result = await _userService.GetOneUserDetailAsync(userId);
 

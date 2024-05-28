@@ -33,8 +33,8 @@ namespace EtuStackOverflow.Controllers.Api
             return CreateActionResultInstance(result);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetOneQuestionAsync([FromRoute(Name = "id")]int id)
+        [HttpGet("{id:long}")]
+        public async Task<IActionResult> GetOneQuestionAsync([FromRoute(Name = "id")]long id)
         {
             var result = await _questionService.GetOneQuestionDetailAsync(id);
 
@@ -60,6 +60,13 @@ namespace EtuStackOverflow.Controllers.Api
             return CreateActionResultInstance(result);
         }
 
+        [HttpPut("solved/{id:long}"),Authorize]
+        public async Task<IActionResult> UpdateQuestion([FromRoute]long id)
+        {
+            var result = await _questionService.MarkSolvedQuestionAsync(id);
+
+            return CreateActionResultInstance(result);
+        }
 
         [HttpGet("interactions/{id:int}")]
         public IActionResult AllInteractionForUser(int id)

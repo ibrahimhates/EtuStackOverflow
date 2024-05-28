@@ -1,11 +1,12 @@
 import { getCookie, deleteCookie } from './cookieManager.js';
-import { getUserProfileDetail, updateUserProfileDetail, getAllUsers } from './data/user.js';
-import { getAllQuestionWithPage, createQuestion,deleteQuestion, getOneQuestion, createComment } from './data/question.js';
+import { getUserProfileDetail, updateUserProfileDetail, getAllUsers, getUserProfileDetailById } from './data/user.js';
+import { getAllQuestionWithPage, createQuestion, deleteQuestion, getOneQuestion, createComment, solvedQuestion } from './data/question.js';
 
 new Vue({
     el: "#baseBody",
     data: {
         userProfileDetail: {
+            id: 0,
             fullName: "",
             name: "",
             surName: "",
@@ -26,20 +27,37 @@ new Vue({
             profilePhoto: "",
             userName: "",
         },
-        userList:[],
+        anotherUsersProfileDetail: {
+            id: 0,
+            fullName: "",
+            name: "",
+            surName: "",
+            dateOfBirth: "" | null,
+            profilePhoto: [],
+            email: "",
+            verifyEmail: false,
+            userName: "",
+            commentCount: 0,
+            interactionCount: 0,
+            interactions: [],
+            questions: []
+        },
+        userList: [],
         questions: [],
         question: {
-            id:0,
+            id: 0,
+            userId: 0,
             profilePhoto: [],
             userName: "",
             createdDate: "",
             title: "",
             content: "",
-            comments:[]
+            isSolved: false,
+            comments: []
         },
         questionCreate: {
-            title:"",
-            content:""
+            title: "",
+            content: ""
         },
         commentCreate: {
             content: "",
@@ -69,9 +87,9 @@ new Vue({
 
                 // pageNumber'ý kontrol et ve geçerli bir sayýya dönüþtür
                 if (!pageNumber || isNaN(pageNumber) || parseInt(pageNumber) <= 0) {
-                  pageNumber = 1;
+                    pageNumber = 1;
                 } else {
-                  pageNumber = parseInt(pageNumber);
+                    pageNumber = parseInt(pageNumber);
                 }
 
                 this.pagging.currentPage = pageNumber;
@@ -90,6 +108,12 @@ new Vue({
             if (this.$refs.userPageList) {
                 this.getAllUsersEvent();
             }
+            if (this.$refs.anotherUsersProfileDetail) {
+                this.isLoading = true;
+                getUserProfileDetailById(this)
+                    .then(() => this.isLoading = false)
+                    .catch(() => this.isLoading = false)
+            }
             if (this.$refs.profileList) {
                 getUserProfileDetail(this);
             }
@@ -101,7 +125,13 @@ new Vue({
                 } else {
                     this.token = tokenCookieValue;
                     this.isLogin = true;
-                    getUserProfileDetail(this);
+                    const data = localStorage.getItem('userProfileDetail');
+
+                    if (!data) {
+                        getUserProfileDetail(this);
+                    } else {
+                        this.userProfileDetail = JSON.parse(data);
+                    }
                 }
             }
         });
@@ -190,8 +220,11 @@ new Vue({
                 })
         },
         deleteQuestionEvent(deletedId) {
-            this.userProfileDetail.questions.filter(question => question.id !== deletedId)
+            this.userProfileDetail.questions = this.userProfileDetail.questions.filter(question => question.id !== deletedId)
             deleteQuestion(this, deletedId);
+        },
+        markSolvedQuestionEvent(questionId) {
+            solvedQuestion(this, questionId);
         },
         createCommentEvent() {
             this.isLoadingForNewComment = true;

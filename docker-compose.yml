@@ -24,7 +24,6 @@ services:
     restart: always
     networks:
         - etu
-    hostname: "db"
     volumes:
         - mysqldata:/var/lib/mysql
 
