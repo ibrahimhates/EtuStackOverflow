@@ -41,62 +41,69 @@ namespace AskForEtu.Repository.Context
             modelBuilder.Entity<Comment>()
                 .HasQueryFilter(u => !u.IsDeleted);
 
+            var majors = new List<Major>
+                    {
+                        new Major
+                        {
+                            Id = 1,
+                            Name = "Bilgisayar Mühendisliği",
+                            FacultyId = 1
+                        },
+                        new Major
+                        {
+                            Id = 2,
+                            Name = "Makine Mühendisliği",
+                            FacultyId = 1
+                        },
+                        new Major
+                        {
+                            Id = 3,
+                            Name = "Elektrik Elektronik Mühendisliği",
+                            FacultyId = 1
+                        },
+                        new Major
+                        {
+                            Id = 4,
+                            Name = "Endüstri Mühendisliği",
+                            FacultyId = 1
+                        },
+                        new Major
+                        {
+                            Id = 5,
+                            Name = "Türk Dili ve Edebiyatı",
+                            FacultyId = 2
+                        },
+                        new Major
+                        {
+                            Id = 6,
+                            Name = "İngiliz Dili ve Edebiyatı",
+                            FacultyId = 2
+                        },
+                        new Major
+                        {
+                            Id = 7,
+                            Name = "Psikoloji",
+                            FacultyId = 2
+                        }
+                    };
+
             var faculties = new List<Faculty>
             {
                 new()
                 {
                     Id = 1,
                     Name = "Muhendislik Fakültesi",
-                    Majors = new List<Major>
-                    {
-                        new Major
-                        {
-                            Id = 1,
-                            Name = "Bilgisayar Mühendisliği"
-                        },
-                        new Major
-                        {
-                            Id = 2,
-                            Name = "Makine Mühendisliği"
-                        },
-                        new Major
-                        {
-                            Id = 3,
-                            Name = "Elektrik Elektronik Mühendisliği"
-                        },
-                        new Major
-                        {
-                            Id = 4,
-                            Name = "Endüstri Mühendisliği"
-                        }
-                    }
+                    
                 },
                 new()
                 {
                     Id = 2,
                     Name = "Edebiyat Fakültesi",
-                    Majors = new List<Major>
-                    {
-                        new Major
-                        {
-                            Id = 8,
-                            Name = "Türk Dili ve Edebiyatı"
-                        },
-                        new Major
-                        {
-                            Id = 9,
-                            Name = "İngiliz Dili ve Edebiyatı"
-                        },
-                        new Major
-                        {
-                            Id = 10,
-                            Name = "Psikoloji"
-                        }
-                    }
                 }
             };
 
             modelBuilder.Entity<Faculty>().HasData(faculties);
+            modelBuilder.Entity<Major>().HasData(majors);
 
             base.OnModelCreating(modelBuilder);
         }
