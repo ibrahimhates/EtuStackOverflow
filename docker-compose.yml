@@ -1,37 +1,35 @@
-version: '3.8'
+version: '3.4'
 
 services:
   etustackoverflow:
-    image: ${DOCKER_REGISTRY-}etustackoverflow
+    image: ${docker_regýstry-}etustackoverflow
     build:
-      context: .
-      dockerfile: EtuStackOverflow/Dockerfile
+        context: .
+        dockerfile: etustackoverflow/dockerfile
     ports:
-      - "8080:8080"
+        - "8080:8080"
     restart: always
     depends_on:
-      - etusowf-db
+        - etusowf-db
     networks:
-      - etu
+        - etu
 
   etusowf-db:
-    image: mysql:latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: etusowf-db
     environment:
-        MYSQL_ROOT_PASSWORD: P@ssw0rd
-        MYSQL_DATABASE: EtuStackOverflowDB
-        MYSQL_USER: etu_user
-        MYSQL_PASSWORD: P@ssw0rd
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "P@ssw0rd"
     ports:
-      - "3306:3306"
+      - "1433:1433"
     restart: always
     networks:
       - etu
     volumes:
-        - mysqldata:/var/lib/mysql
+      - mssqldata:/var/opt/mssql
 
 networks:
   etu:
 
 volumes:
-  mysqldata:
+  mssqldata:

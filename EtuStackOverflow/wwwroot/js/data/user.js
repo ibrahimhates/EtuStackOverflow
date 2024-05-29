@@ -40,6 +40,18 @@ export const getUserProfileDetail = async (app) => {
 export const getUserProfileDetailById = async (app) => {
     var routeId = window.location.href.split('/').reverse()[0];
     const data = localStorage.getItem('userProfileDetail');
+
+    const tokenCookieValue = getCookie("accessToken")
+
+    if (tokenCookieValue === "") {
+        app.isLogin = false;
+        deleteCookie("accessToken");
+        window.location.pathname = "/";
+        return;
+    } else {
+        app.token = tokenCookieValue;
+    }
+
     if (data) {
         app.userProfileDetail = JSON.parse(data);
     }
@@ -49,9 +61,15 @@ export const getUserProfileDetailById = async (app) => {
     }
     console.log(app.question)
     try {
-        const response = await axios.get(`/api/users/${routeId}`)
+        const response = await axios.get(`/api/users/${routeId}`, { headers: { 'Authorization': 'Bearer ' + app.token } })
         app.anotherUsersProfileDetail = response.data.data;
     } catch (err) {
+        if (err.response.status == 401)
+        {
+            app.isLogin = false;
+            deleteCookie("accessToken");
+            window.location.pathname = "/";
+        }
         console.error('Birseyler ters gitti',err);
     }
 }

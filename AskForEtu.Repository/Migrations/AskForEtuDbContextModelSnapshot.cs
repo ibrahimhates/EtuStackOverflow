@@ -18,9 +18,9 @@ namespace AskForEtu.Repository.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.4")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("AskForEtu.Core.Entity.Comment", b =>
                 {
@@ -28,23 +28,23 @@ namespace AskForEtu.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<long>("QuestionId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -64,7 +64,7 @@ namespace AskForEtu.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("CommentId")
                         .HasColumnType("bigint");
@@ -84,15 +84,27 @@ namespace AskForEtu.Repository.Migrations
             modelBuilder.Entity("AskForEtu.Core.Entity.Faculty", b =>
                 {
                     b.Property<byte>("Id")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Faculties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            Name = "Muhendislik Fakültesi"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            Name = "Edebiyat Fakültesi"
+                        });
                 });
 
             modelBuilder.Entity("AskForEtu.Core.Entity.Like", b =>
@@ -101,7 +113,7 @@ namespace AskForEtu.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("CommentId")
                         .HasColumnType("bigint");
@@ -121,20 +133,64 @@ namespace AskForEtu.Repository.Migrations
             modelBuilder.Entity("AskForEtu.Core.Entity.Major", b =>
                 {
                     b.Property<byte>("Id")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint");
 
                     b.Property<byte>("FacultyId")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FacultyId");
 
                     b.ToTable("Majors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (byte)1,
+                            FacultyId = (byte)1,
+                            Name = "Bilgisayar Mühendisliği"
+                        },
+                        new
+                        {
+                            Id = (byte)2,
+                            FacultyId = (byte)1,
+                            Name = "Makine Mühendisliği"
+                        },
+                        new
+                        {
+                            Id = (byte)3,
+                            FacultyId = (byte)1,
+                            Name = "Elektrik Elektronik Mühendisliği"
+                        },
+                        new
+                        {
+                            Id = (byte)4,
+                            FacultyId = (byte)1,
+                            Name = "Endüstri Mühendisliği"
+                        },
+                        new
+                        {
+                            Id = (byte)5,
+                            FacultyId = (byte)2,
+                            Name = "Türk Dili ve Edebiyatı"
+                        },
+                        new
+                        {
+                            Id = (byte)6,
+                            FacultyId = (byte)2,
+                            Name = "İngiliz Dili ve Edebiyatı"
+                        },
+                        new
+                        {
+                            Id = (byte)7,
+                            FacultyId = (byte)2,
+                            Name = "Psikoloji"
+                        });
                 });
 
             modelBuilder.Entity("AskForEtu.Core.Entity.PasswordReset", b =>
@@ -143,17 +199,17 @@ namespace AskForEtu.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AuthField")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ExpiresDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("RefCode")
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -172,27 +228,27 @@ namespace AskForEtu.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsSolved")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -210,14 +266,14 @@ namespace AskForEtu.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<long>("CommentId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -231,23 +287,63 @@ namespace AskForEtu.Repository.Migrations
                     b.ToTable("Reports");
                 });
 
+            modelBuilder.Entity("AskForEtu.Core.Entity.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Name = "User"
+                        });
+                });
+
             modelBuilder.Entity("AskForEtu.Core.Entity.Token", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("RefreshTokenExpires")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -266,60 +362,60 @@ namespace AskForEtu.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<byte>("FacultyId")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint");
 
                     b.Property<byte>("Grade")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<byte>("MajorId")
-                        .HasColumnType("tinyint unsigned");
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("ProfilePhoto")
-                        .HasColumnType("longblob");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("SurName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("VerifyEmail")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<string>("VerifyEmailToken")
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -336,18 +432,50 @@ namespace AskForEtu.Repository.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("AskForEtu.Core.Entity.UserRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRole");
+                });
+
             modelBuilder.Entity("AskForEtu.Core.Entity.Comment", b =>
                 {
                     b.HasOne("AskForEtu.Core.Entity.Question", "Question")
                         .WithMany("Comments")
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("AskForEtu.Core.Entity.User", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Question");
@@ -360,13 +488,13 @@ namespace AskForEtu.Repository.Migrations
                     b.HasOne("AskForEtu.Core.Entity.Comment", "Comment")
                         .WithMany("DisLikes")
                         .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("AskForEtu.Core.Entity.User", "User")
                         .WithMany("DisLikes")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Comment");
@@ -379,13 +507,13 @@ namespace AskForEtu.Repository.Migrations
                     b.HasOne("AskForEtu.Core.Entity.Comment", "Comment")
                         .WithMany("Likes")
                         .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("AskForEtu.Core.Entity.User", "User")
                         .WithMany("Likes")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Comment");
@@ -409,7 +537,7 @@ namespace AskForEtu.Repository.Migrations
                     b.HasOne("AskForEtu.Core.Entity.User", "User")
                         .WithOne("PasswordReset")
                         .HasForeignKey("AskForEtu.Core.Entity.PasswordReset", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -420,7 +548,7 @@ namespace AskForEtu.Repository.Migrations
                     b.HasOne("AskForEtu.Core.Entity.User", "User")
                         .WithMany("Questions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -437,7 +565,7 @@ namespace AskForEtu.Repository.Migrations
                     b.HasOne("AskForEtu.Core.Entity.User", "User")
                         .WithMany("Reports")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Comment");
@@ -450,7 +578,7 @@ namespace AskForEtu.Repository.Migrations
                     b.HasOne("AskForEtu.Core.Entity.User", "User")
                         .WithOne("Token")
                         .HasForeignKey("AskForEtu.Core.Entity.Token", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -459,20 +587,39 @@ namespace AskForEtu.Repository.Migrations
             modelBuilder.Entity("AskForEtu.Core.Entity.User", b =>
                 {
                     b.HasOne("AskForEtu.Core.Entity.Faculty", "Faculty")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("FacultyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("AskForEtu.Core.Entity.Major", "Major")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("MajorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Faculty");
 
                     b.Navigation("Major");
+                });
+
+            modelBuilder.Entity("AskForEtu.Core.Entity.UserRole", b =>
+                {
+                    b.HasOne("AskForEtu.Core.Entity.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("AskForEtu.Core.Entity.User", "User")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AskForEtu.Core.Entity.Comment", b =>
@@ -487,11 +634,23 @@ namespace AskForEtu.Repository.Migrations
             modelBuilder.Entity("AskForEtu.Core.Entity.Faculty", b =>
                 {
                     b.Navigation("Majors");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("AskForEtu.Core.Entity.Major", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("AskForEtu.Core.Entity.Question", b =>
                 {
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("AskForEtu.Core.Entity.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("AskForEtu.Core.Entity.User", b =>
@@ -508,6 +667,8 @@ namespace AskForEtu.Repository.Migrations
                     b.Navigation("Questions");
 
                     b.Navigation("Reports");
+
+                    b.Navigation("Roles");
 
                     b.Navigation("Token")
                         .IsRequired();

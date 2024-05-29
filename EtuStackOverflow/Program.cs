@@ -49,6 +49,7 @@ builder.Services.AddControllersWithViews()
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 
+
 builder.Services.AddSwaggerGen();
 
 // dbContext yapilandirilmasi connection string baglantisi

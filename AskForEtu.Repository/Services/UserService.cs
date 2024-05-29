@@ -1,4 +1,5 @@
-﻿using AskForEtu.Core.Dto.Request;
+﻿using AskForEtu.Core.Behaviour;
+using AskForEtu.Core.Dto.Request;
 using AskForEtu.Core.Dto.Response;
 using AskForEtu.Core.Entity;
 using AskForEtu.Core.Pagination;
@@ -49,6 +50,7 @@ namespace AskForEtu.Repository.Services
                 userDto.InteractionCount = user.Questions.Sum(q => q.Comments.Count());
 
                 userDto.Questions = _mapper.Map<List<QuestionForProfileDto>>(user.Questions.Take(5));
+                userDto.RoleName = user.Roles.First().Role.Name;
 
                 var interactionsComment = user.Questions
                     .SelectMany(q => q.Comments)
@@ -141,11 +143,95 @@ namespace AskForEtu.Repository.Services
             }
         }
 
-        public async Task<Response<UserProfileDto>> GetOneUserDetailAsync(int userId)
+        public async Task<Response<UserProfileDto>> GetOneUserDetailAsync(int userId, string role)
         {
-            var user = await UserProfileDetailAsync(userId);
+            int statusCode = StatusCodes.Status200OK;
+            try
+            {
+                var user = await _userRepository.GetUserProfileDetail(userId);
+                if (user is null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    throw new InvalidDataException("Kullanici bulunamadi");
+                }
+                var userDto = _mapper.Map<UserProfileDto>(user);
 
-            return user;
+                userDto.InteractionCount = user.Questions.Sum(q => q.Comments.Count());
+
+                userDto.Questions = _mapper.Map<List<QuestionForProfileDto>>(user.Questions.Take(5));
+                userDto.RoleName = user.Roles.First().Role.Name;
+
+                List<Comment> comments = null;
+                if (role.Equals(Roles.User))
+                {
+                    comments = user.Questions
+                    .SelectMany(q => q.Comments)
+                    .OrderByDescending(c => c.CreatedDate)
+                    .Take(5).ToList();
+                }
+                else
+                {
+                    comments = user.Comments.ToList();
+                }
+
+                userDto.Interactions = _mapper.Map<List<CommentDto>>(comments);
+
+                return Response<UserProfileDto>.Success(userDto, statusCode);
+            }
+            catch (InvalidDataException error)
+            {
+                _logger.LogError(error.Message);
+                return Response<UserProfileDto>.Fail(error.Message, statusCode);
+            }
+            catch (Exception error)
+            {
+                _logger.LogError(error.Message);
+                return Response<UserProfileDto>.Fail("Bir seyler ters gitti", 500);
+            }
+        }
+
+        public async Task<Response<NoContent>> DeleteOneUserAsync(int userId)
+        {
+            try
+            {
+                var user = await _userRepository
+                    .GetByCondition(x => x.Id == userId, true)
+                    .Include(x => x.Questions)
+                    .ThenInclude(x => x.Comments)
+                    .FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    throw new InvalidDataException("Kullanici bulunamadi");
+                }
+
+                user.IsDeleted = true;
+
+                foreach (var question in user.Questions)
+                {
+                    question.IsDeleted = true;
+
+                    foreach (var comment in question.Comments)
+                    {
+                        comment.IsDeleted = true;
+                    }
+                }
+
+                _userRepository.Update(user);
+                await _unitOfWork.SaveAsync();
+
+                return Response<NoContent>.Success("Kullanıcı silindi", 200);
+            }
+            catch (InvalidDataException err)
+            {
+                _logger.LogError(err.Message);
+                return Response<NoContent>.Fail(err.Message, 404);
+            }
+            catch (Exception err)
+            {
+                _logger.LogError(err.Message);
+                return Response<NoContent>.Fail("Bir seyler ters gitti.", 500);
+            }
         }
     }
 }

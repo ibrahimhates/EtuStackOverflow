@@ -9,5 +9,6 @@ namespace AskForEtu.Core.Entity
         public byte Id { get; set; }
         public string Name { get; set; }
         public ICollection<Major> Majors { get; set; }
+        public ICollection<User> Users{ get; set; }
     }
 }

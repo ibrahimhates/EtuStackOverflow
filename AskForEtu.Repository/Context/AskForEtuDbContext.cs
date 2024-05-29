@@ -21,6 +21,7 @@ namespace AskForEtu.Repository.Context
         DbSet<Major> Majors { get; set; }
         DbSet<Faculty> Faculties { get; set; }
         DbSet<Report> Reports { get; set; }
+        DbSet<Role> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +29,91 @@ namespace AskForEtu.Repository.Context
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email).IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Major)
+                .WithMany(m => m.Users)
+                .HasForeignKey(u => u.MajorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Faculty)
+                .WithMany(m => m.Users)
+                .HasForeignKey(u => u.FacultyId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(u => u.User)
+                .WithMany(t => t.Comments)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(u => u.Question)
+                .WithMany(t => t.Comments)
+                .HasForeignKey(t => t.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Question>()
+                .HasOne(u => u.User)
+                .WithMany(t => t.Questions)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Like>()
+                .HasOne(u => u.User)
+                .WithMany(t => t.Likes)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DisLike>()
+                .HasOne(u => u.User)
+                .WithMany(t => t.DisLikes)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Report>()
+                .HasOne(u => u.User)
+                .WithMany(t => t.Reports)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(u => u.User)
+                .WithMany(t => t.Roles)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(u => u.Role)
+                .WithMany(t => t.Users)
+                .HasForeignKey(t => t.RoleId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Token>()
+                .HasOne(u => u.User)
+                .WithOne(t => t.Token)
+                .HasForeignKey<Token>(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<PasswordReset>()
+                .HasOne(u => u.User)
+                .WithOne(t => t.PasswordReset)
+                .HasForeignKey<PasswordReset>(t => t.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Like>()
+                .HasOne(u => u.Comment)
+                .WithMany(t => t.Likes)
+                .HasForeignKey(t => t.CommentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DisLike>()
+                .HasOne(u => u.Comment)
+                .WithMany(t => t.DisLikes)
+                .HasForeignKey(t => t.CommentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.UserName).IsUnique();
@@ -40,6 +126,20 @@ namespace AskForEtu.Repository.Context
 
             modelBuilder.Entity<Comment>()
                 .HasQueryFilter(u => !u.IsDeleted);
+
+            var roles = new List<Role>
+            {
+                new Role
+                {
+                    Id = 1,
+                    Name = "Admin"
+                },
+                new Role
+                {
+                    Id = 2,
+                    Name = "User"
+                }
+            };
 
             var majors = new List<Major>
                     {
@@ -104,6 +204,7 @@ namespace AskForEtu.Repository.Context
 
             modelBuilder.Entity<Faculty>().HasData(faculties);
             modelBuilder.Entity<Major>().HasData(majors);
+            modelBuilder.Entity<Role>().HasData(roles);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -8,6 +8,11 @@
             <div class="card-body">
                 <div class="row mb-5 d-flex justify-content-center">
                     <div class="col-md-12">
+                        <div v-if="userProfileDetail.roleName==='Admin'" class="d-flex justify-content-end">
+                            <button class="btn btn-danger text-white" v-on:click="deleteUserEvent(anotherUsersProfileDetail.id)">
+                                <i class='fa fa-trash'></i>
+                            </button>
+                        </div>
                         <div class="d-flex justify-content-center mb-4 mt-1">
                             <img v-if="anotherUsersProfileDetail.id!==0&&anotherUsersProfileDetail.profilePhoto.length > 0" class="rounded-circle" v-bind:src="getProfilePhoto(anotherUsersProfileDetail.profilePhoto)" width="160" height="160" alt="">
                             <span v-if="!(anotherUsersProfileDetail.id!==0&&anotherUsersProfileDetail.profilePhoto.length !== 0)"
@@ -63,7 +68,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-center align-items-center">
                 <h3 class="card-title">
-                    Sorularim
+                    Kullanıcı Soruları
                 </h3>
             </div>
             <div class="card-body">
@@ -82,6 +87,11 @@
                                 {{question.content}}
                             </p>
                         </div>
+                        <div v-if="userProfileDetail.roleName==='Admin'" class="basic-dropdown d-flex justify-content-end">
+                            <div class="btn-group">
+                                <button type="button" v-on:click="deleteQuestionEvent(question.id)" class="btn btn-danger"><i class='fa fa-trash'></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,8 +100,11 @@
     <div class="col-md-5" v-if="(anotherUsersProfileDetail.id !== 0)&&(!isLoading)">
         <div class="card">
             <div class="card-header d-flex justify-content-center align-items-center">
-                <h3 class="card-title">
-                    Etkilesimlerim
+                <h3 v-if="userProfileDetail.roleName==='User'" class="card-title">
+                    Kullanıcı Etkileşimleri
+                </h3>
+                <h3 v-if="userProfileDetail.roleName==='Admin'" class="card-title">
+                    Kullanıcı Yorumları
                 </h3>
             </div>
             <div class="card-body">
@@ -104,7 +117,7 @@
                     <div class="media-body ml-2">
                         <div class="d-sm-flex justify-content-between mb-2">
                             <h5 class="mb-sm-0">{{comment.userName}} <small class="text-muted ml-3">{{timeSince(comment.createdDate)}}</small></h5>
-                            <div class="media-reply__link d-flex justify-content-around">
+                            <!-- <div class="media-reply__link d-flex justify-content-around">
                                 <div class="d-flex justify-content-center align-items-center mr-3">
                                     <span>{{comment.likeCount}}</span>
                                     <button class="btn btn-transparent p-0 ml-1" @* v-on:click="like(index)" *@><i class="fa fa-thumbs-up"></i></button>
@@ -114,10 +127,15 @@
                                     <button class="btn btn-transparent p-0 ml-1" @* v-on:click="disLike(index)" *@><i class="fa fa-thumbs-down"></i></button>
                                 </div>
                                 <button class="btn btn-transparent text-dark font-weight-bold p-0 ml-2">Report</button>
-                            </div>
+                            </div>-->
                         </div>
                         <div type="button" v-on:click="changeLocationRoute('/questions/'+comment.questionId)">
                             <p>{{comment.content}}</p>
+                        </div>
+                        <div v-if="userProfileDetail.roleName==='Admin'" class="d-flex justify-content-end">
+                            <div class="btn-group">
+                                <button type="button" v-on:click="deleteCommentEvent(comment.id)" class="btn btn-danger"><i class='fa fa-trash'></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>

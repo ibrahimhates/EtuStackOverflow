@@ -25,4 +25,4 @@ RUN dotnet publish "./EtuStackOverflow.csproj" -c $BUILD_CONFIGURATION -o /app/p
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "EtuStackOverflow.dll", "--urls", "https://*:443"]
+ENTRYPOINT ["dotnet", "EtuStackOverflow.dll"]

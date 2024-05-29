@@ -6,4 +6,5 @@ namespace AskForEtu.Core.Services;
 public interface ICommentService
 {
     Task<Response<NoContent>> CreateCommentAsync(CreateCommentDto createCommentDto, int userId);
+    Task<Response<NoContent>> DeleteCommentByAdminAsync(long id);
 }

@@ -18,6 +18,8 @@ namespace AskForEtu.Repository.Services.Repo
             || x.UserName == userNameOrEmail, trackChanges)
                 .IgnoreQueryFilters()
                 .Include(x => x.Token)
+                .Include(x => x.Roles)
+                    .ThenInclude(x => x.Role)
                 .FirstOrDefaultAsync();
 
             return user;
@@ -26,7 +28,9 @@ namespace AskForEtu.Repository.Services.Repo
         public async Task<User> GetByEmailVerifyTokenAsync(string token, bool trackChanges = false)
         {
             var user = await GetByCondition(x => x.VerifyEmailToken.Equals(token)
-                , trackChanges).FirstOrDefaultAsync();
+                , trackChanges)
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync();
 
             return user;
         }
@@ -38,9 +42,12 @@ namespace AskForEtu.Repository.Services.Repo
                 .Include(x => x.Questions)
                     .ThenInclude(x => x.Comments)
                         .ThenInclude(x => x.User)
+                .Include(x => x.Roles)
+                    .ThenInclude(x => x.Role)
                 .FirstOrDefaultAsync();
 
             return user;
         }
+
     }
 }

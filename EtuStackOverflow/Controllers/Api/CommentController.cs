@@ -16,7 +16,7 @@ public class CommentController : CustomController
         _commentService = commentService;
     }
 
-    [HttpPost, Authorize]
+    [HttpPost, Authorize(Roles = "User,Admin")]
     public async Task<IActionResult> CreateComment(CreateCommentDto createCommentDto)
     {
         var id = GetUserId();
@@ -27,15 +27,11 @@ public class CommentController : CustomController
         return CreateActionResultInstance(result);
     }
 
-    [HttpGet("allForUser/{id:int}")]
-    public IActionResult AllCommentForUser(int id)
+    [HttpDelete("{id:int}"), Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteCommentByAdmin([FromQuery]long id)
     {
-        return Ok();
-    }
+        var result = await _commentService.DeleteCommentByAdminAsync(id);
 
-    [HttpGet("interactions/{id:int}")]
-    public IActionResult AllInteractionForUser(int id)
-    {
-        return Ok();
+        return CreateActionResultInstance(result);
     }
 }

@@ -62,4 +62,33 @@ public class CommentService : ICommentService
             return Response<NoContent>.Fail("Birseyler ters giti.", 404);
         }
     }
+
+    public async Task<Response<NoContent>> DeleteCommentByAdminAsync(long id)
+    {
+
+        try
+        {
+            var deletedComment = await _commentRepository.GetByIdAsync(id);
+
+            if (deletedComment is null)
+                throw new InvalidDataException("Silmek istediginiz yorum bulunamadi!");
+
+            deletedComment.IsDeleted = true;
+
+            _commentRepository.Update(deletedComment);
+            await _unitOfWork.SaveAsync();
+
+            return Response<NoContent>.Success("Yorum basarili bir sekilde silindi", 204);
+        }
+        catch (InvalidDataException err)
+        {
+            _logger.LogError(err.Message);
+            return Response<NoContent>.Fail(err.Message, 404);
+        }
+        catch (Exception err)
+        {
+            _logger.LogError(err.Message);
+            return Response<NoContent>.Fail("Birseyler ters giti.", 404);
+        }
+    }
 }

@@ -4,7 +4,7 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
-    <ProjectGuid>6d534bff-2984-4986-87db-c95fa80c0cb5</ProjectGuid>
+    <ProjectGuid>7fb1e77f-592f-43e5-9ab3-407892c99aca</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
     <DockerServiceName>etustackoverflow</DockerServiceName>

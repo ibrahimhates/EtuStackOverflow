@@ -1,4 +1,5 @@
-﻿@{
+﻿@model dynamic
+@{
     ViewData["Title"] = "Home";
 }
 
@@ -9,7 +10,7 @@
                 <div class="media">
                     <span class="card-widget__icon"><i class="icon-tag"></i></span>
                     <div class="media-body">
-                        <h2 class="card-widget__title">+300</h2>
+                        <h2 class="card-widget__title">@Model.questionCount</h2>
                         <h5 class="card-widget__subtitle">Questions</h5>
                     </div>
                 </div>
@@ -23,7 +24,7 @@
                 <div class="media">
                     <span class="card-widget__icon"><i class="icon-emotsmile"></i></span>
                     <div class="media-body">
-                        <h2 class="card-widget__title">176</h2>
+                        <h2 class="card-widget__title">@Model.solvedQuestionCount</h2>
                         <h5 class="card-widget__subtitle">Resolved Question</h5>
                     </div>
                 </div>
@@ -37,7 +38,7 @@
                 <div class="media">
                     <span class="card-widget__icon"><i class="icon-ghost"></i></span>
                     <div class="media-body">
-                        <h2 class="card-widget__title">+420</h2>
+                        <h2 class="card-widget__title">@Model.userCount</h2>
                         <h5 class="card-widget__subtitle">Users</h5>
                     </div>
                 </div>

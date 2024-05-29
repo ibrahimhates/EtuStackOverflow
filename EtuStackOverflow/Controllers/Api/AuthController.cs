@@ -58,7 +58,7 @@ namespace EtuStackOverflow.Controllers.Api
             return CreateActionResultInstance(result);
         }
 
-        [HttpPost("logout"), Authorize]
+        [HttpPost("logout"), Authorize(Roles = "User,Admin" )]
         public async Task<IActionResult> Logout()
         {
             var userId = GetUserId();

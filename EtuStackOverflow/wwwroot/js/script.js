@@ -1,7 +1,7 @@
 import { getCookie, deleteCookie } from './cookieManager.js';
 import { getUserProfileDetail, updateUserProfileDetail, getAllUsers, getUserProfileDetailById } from './data/user.js';
 import { getAllQuestionWithPage, createQuestion, deleteQuestion, getOneQuestion, createComment, solvedQuestion } from './data/question.js';
-
+import { deleteCommentByAdmin, deleteQuestionByAdmin,deleteUserByAdmin } from './admin/admin.js'; 
 new Vue({
     el: "#baseBody",
     data: {
@@ -15,6 +15,7 @@ new Vue({
             email: "",
             verifyEmail: false,
             userName: "",
+            roleName:"",
             commentCount: 0,
             interactionCount: 0,
             interactions: [],
@@ -234,6 +235,15 @@ new Vue({
                 }).catch(err => {
                     this.isLoadingForNewComment = false;
                 })
+        },
+        deleteCommentEvent(commentId) {
+            deleteCommentByAdmin(this, commentId);
+        },
+        deleteQuestionEvent(questionId) {
+            deleteQuestionByAdmin(this, questionId);
+        },
+        deleteUserEvent(userId) {
+            deleteUserByAdmin(this, userId);
         },
         goToPage(page) {
             if (page === '...') return;

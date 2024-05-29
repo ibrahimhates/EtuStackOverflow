@@ -26,8 +26,8 @@ namespace EtuStackOverflow.Extensions
             IConfiguration configuration)
             => services.AddDbContext<AskForEtuDbContext>(options =>
             {
-                var connectionString = configuration.GetConnectionString("mySql");
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+                var connectionString = configuration.GetConnectionString("SqlServer");
+                options.UseSqlServer(connectionString);
             });
 
         public static void ConfigureServices(this IServiceCollection services)
@@ -48,6 +48,7 @@ namespace EtuStackOverflow.Extensions
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
         }
 
         public static void ConfigureResponsibility(this IServiceCollection services)

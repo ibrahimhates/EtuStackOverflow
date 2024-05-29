@@ -1,19 +1,31 @@
+using AskForEtu.Core.Services.Repo;
+using AskForEtu.Repository.Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EtuStackOverflow.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IUserRepository _userRepository;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IQuestionRepository _questionRepository;
+        public HomeController(ILogger<HomeController> logger, IUserRepository userRepository, ICommentRepository commentRepository, IQuestionRepository questionRepository)
         {
             _logger = logger;
+            _userRepository=userRepository;
+            _commentRepository=commentRepository;
+            _questionRepository=questionRepository;
         }
-        
-        public IActionResult Index()
+
+        public async Task<IActionResult> IndexAsync()
         {
-            return View();
+            var questionCount = await _questionRepository.GetCountAsync();
+            var solvedQuestionCount = await _questionRepository.GetAll(false).Where(x => x.IsSolved).CountAsync();
+            var userCount = await _userRepository.GetCountAsync();
+
+            return View(new { solvedQuestionCount, questionCount, userCount });
         }
 
         [Route("/questions")]

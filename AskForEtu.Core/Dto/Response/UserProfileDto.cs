@@ -15,6 +15,7 @@ namespace AskForEtu.Core.Dto.Response
     {
         public List<CommentDto>? Interactions { get; set; }
         public List<QuestionForProfileDto>?  Questions { get; set; }
+        public string RoleName { get; set; }
         public int CommentCount { get; set; }
         public int InteractionCount { get; set; }
     }

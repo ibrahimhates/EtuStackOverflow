@@ -1,6 +1,7 @@
 ﻿using AskForEtu.Core.ResultStructure;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace EtuStackOverflow.Controllers.Api.CustomControllerBase
 {
@@ -42,6 +43,14 @@ namespace EtuStackOverflow.Controllers.Api.CustomControllerBase
         {
             if (HttpContext.User.Claims.Any())
                 return HttpContext.User.Claims.First(f => f.Type.Equals("contact")).Value;
+
+            return null;
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public string GetUserRole()
+        {
+            if (HttpContext.User.Claims.Any())
+                return HttpContext.User.Claims.First(f => f.Type.Equals(ClaimTypes.Role)).Value;
 
             return null;
         }

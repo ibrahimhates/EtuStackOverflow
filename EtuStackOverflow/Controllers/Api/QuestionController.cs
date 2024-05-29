@@ -18,13 +18,6 @@ namespace EtuStackOverflow.Controllers.Api
             _questionService=questionService;
         }
 
-        [HttpGet("allForUser/{id:int}")]
-        public IActionResult AllQuestionForUser(int id)
-        {
-
-            return Ok();
-        }
-
         [HttpGet]
         public async Task<IActionResult> AllQuestionsAsync([FromQuery]int pageNumber)
         {
@@ -41,7 +34,7 @@ namespace EtuStackOverflow.Controllers.Api
             return CreateActionResultInstance(result);
         }
 
-        [HttpPost,Authorize]
+        [HttpPost,Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> CreateQuestion(CreateQuestionDto createQuestionDto)
         {
             var id = GetUserId();
@@ -52,15 +45,24 @@ namespace EtuStackOverflow.Controllers.Api
             return CreateActionResultInstance(result);
         }
 
-        [HttpDelete("{id:long}"),Authorize]
+        [HttpDelete("{id:long}"),Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> DeleteQuestion([FromRoute]long id)
         {
-            var result = await _questionService.DeleteQuestionAsync(id);
+            var userId = int.Parse(GetUserId());
+            var result = await _questionService.DeleteQuestionAsync(id,userId);
 
             return CreateActionResultInstance(result);
         }
 
-        [HttpPut("solved/{id:long}"),Authorize]
+        [HttpDelete("force/{id:long}"), Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteQuestionByAdmin([FromRoute] long id)
+        {
+            var result = await _questionService.DeleteQuestionByAdminAsync(id);
+
+            return CreateActionResultInstance(result);
+        }
+
+        [HttpPut("solved/{id:long}"),Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> UpdateQuestion([FromRoute]long id)
         {
             var result = await _questionService.MarkSolvedQuestionAsync(id);

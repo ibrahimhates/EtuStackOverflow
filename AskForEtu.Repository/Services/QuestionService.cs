@@ -68,7 +68,7 @@ public class QuestionService : IQuestionService
         }
     }
 
-    public async Task<Response<NoContent>> DeleteQuestionAsync(long id)
+    public async Task<Response<NoContent>> DeleteQuestionAsync(long id,int userId)
     {
         try
         {
@@ -79,7 +79,49 @@ public class QuestionService : IQuestionService
                 throw new InvalidDataException("Soru bulunamadı");
             }
 
+            if(deletedQuestion.UserId != userId)
+            {
+                throw new InvalidDataException("Bu işlemi yapmaya yetkiniz yok");
+            }
+
             deletedQuestion.IsDeleted = true;
+
+            _questionRepository.Update(deletedQuestion);
+            await _unitOfWork.SaveAsync();
+
+            return Response<NoContent>.Success("Soru silindi", 200);
+        }
+        catch (InvalidDataException err)
+        {
+            _logger.LogError(err.Message);
+            return Response<NoContent>.Fail(err.Message, 404);
+        }
+        catch (Exception err)
+        {
+            _logger.LogError(err.Message);
+            return Response<NoContent>.Fail("Bir seyler ters gitti.", 500);
+        }
+    }
+
+    public async Task<Response<NoContent>> DeleteQuestionByAdminAsync(long id)
+    {
+        try
+        {
+            var deletedQuestion = await _questionRepository.GetAll(true)
+                .Include(x => x.Comments)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (deletedQuestion == null)
+            {
+                throw new InvalidDataException("Soru bulunamadı");
+            }
+
+            deletedQuestion.IsDeleted = true;
+
+            foreach (var comment in deletedQuestion.Comments)
+            {
+                comment.IsDeleted = true;
+            }
 
             _questionRepository.Update(deletedQuestion);
             await _unitOfWork.SaveAsync();

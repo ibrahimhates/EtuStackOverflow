@@ -12,10 +12,12 @@ using AskForEtu.Core.Services.Queue;
 using AskForEtu.Core.Services.Repo;
 using AskForEtu.Repository.UnitofWork;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 using System.Security.Cryptography;
 
 namespace AskForEtu.Repository.Services
@@ -23,6 +25,7 @@ namespace AskForEtu.Repository.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
@@ -47,7 +50,8 @@ namespace AskForEtu.Repository.Services
             IJwtProvider provider,
             ITaskQueue<EmailSendTemplate> queue,
             LinkGenerator linkGenerator,
-            IPasswordResetRepository pwdResetRepository)
+            IPasswordResetRepository pwdResetRepository,
+            IRoleRepository roleRepository)
         {
             _userRepository=userRepository;
             _mapper=mapper;
@@ -61,6 +65,7 @@ namespace AskForEtu.Repository.Services
             _queue=queue;
             _linkGenerator=linkGenerator;
             _pwdResetRepository=pwdResetRepository;
+            _roleRepository=roleRepository;
         }
 
         public async Task<Response<TokenDto>> LoginAsync(LoginDto loginDto)
@@ -69,6 +74,12 @@ namespace AskForEtu.Repository.Services
             try
             {
                 var user = await _userRepository.GetByUserOrEmailAsync(loginDto.userNameOrEmail);
+
+                if (user.IsDeleted)
+                {
+                    statusCode = StatusCodes.Status401Unauthorized;
+                    throw new InvalidDataException("Bu kullanıcı banlanmıştır.");
+                }
 
                 if (user is not User)
                 {
@@ -88,7 +99,6 @@ namespace AskForEtu.Repository.Services
                     throw new InvalidDataException("Email doğrulaması yapılmadı. Lütfen email adresinizi doğrulayın.");
                 }
 
-
                 Token userToken = user.Token;
                 if (user.Token is not Token)
                 {
@@ -98,6 +108,7 @@ namespace AskForEtu.Repository.Services
 
                 // Kullacini hesabi pasif almissa tekrar giriste aktif olarak guncelleniyor 
                 if (!user.IsActive) user.IsActive = true;
+
 
                 var userTokenResponse = CreateToken(user, userToken, true);
 
@@ -139,10 +150,17 @@ namespace AskForEtu.Repository.Services
                     throw new InvalidDataException("Kullanici adi zaten kullaniliyor!");
                 }
 
-                userIsExist = await _userRepository.GetAll(false).IgnoreQueryFilters().AnyAsync(x => x.Email == registerDto.Email);
-                if (userIsExist)
+                var userIsExistWithEmail = await _userRepository
+                    .GetAll(false)
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(x => x.Email == registerDto.Email);
+
+                if (userIsExistWithEmail is not null)
                 {
-                    throw new InvalidDataException("Email adresi zaten kullaniliyor!");
+                    if(userIsExistWithEmail.IsDeleted)
+                        throw new InvalidDataException("Bu email adresi banlanmıştır!");
+
+                    throw new InvalidDataException("Email adresi zaten kullanılıyor!");
                 }
 
                 var facultyIsExist = await _facultRepository.AnyAsync(x => x.Id == registerDto.FacultyId);
@@ -157,8 +175,18 @@ namespace AskForEtu.Repository.Services
                     throw new InvalidDataException("Bolum bilgisi girmediniz!");
                 }
 
+                var role = await _roleRepository.GetRoleByNameAsync(Roles.User);
+
                 var user = _mapper.Map<User>(registerDto);
                 user.PasswordHash = _passwordHasher.Hash(registerDto.Password);
+
+                user.Roles = new List<UserRole>()
+                {
+                    new()
+                    {
+                        RoleId = role.Id,
+                    }
+                };
 
                 var emailVerifyToken = Guid.NewGuid().ToString();
                 user.VerifyEmailToken = emailVerifyToken;

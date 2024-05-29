@@ -2,6 +2,7 @@
 using AskForEtu.Core.JwtGenerator;
 using AskForEtu.Core.Options;
 using AskForEtu.Core.Services.Repo;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -25,13 +26,20 @@ namespace AskForEtu.Repository.JwtGenerator
 
         public string Generate(User user)
         {
-            var claims = new Claim[]
+            var claims = new List<Claim>()
             {
                 new Claim("usrId", user.Id.ToString()),
                 new Claim("contact", user.Email),
                 new Claim(JwtRegisteredClaimNames.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            var userRoles = user.Roles.Select(x => x.Role).ToList();
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Name));
+            }
 
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(

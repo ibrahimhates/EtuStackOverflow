@@ -11,6 +11,6 @@ namespace AskForEtu.Core.Entity
         public string Content { get; set; }
         public bool IsSolved { get; set; }
         public User User { get; set; }
-        public List<Comment> Comments{ get; set; }
+        public ICollection<Comment> Comments{ get; set; }
     }
 }

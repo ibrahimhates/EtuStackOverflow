@@ -16,7 +16,7 @@ namespace EtuStackOverflow.Controllers.Api
             _userService=userService;
         }
 
-        [HttpGet("profile-detail"), Authorize]
+        [HttpGet("profile-detail"), Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> UserProfileDetailAsync()
         {
             var userId = GetUserId();
@@ -26,7 +26,7 @@ namespace EtuStackOverflow.Controllers.Api
             return CreateActionResultInstance(result);
         }
 
-        [HttpPost("update-profile-detail"), Authorize]
+        [HttpPost("update-profile-detail"), Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> UpdateProfileDetail([FromBody] UserProfileUpdateDto profileUpdateDto)
         {
             var userId = GetUserId();
@@ -44,10 +44,20 @@ namespace EtuStackOverflow.Controllers.Api
             return CreateActionResultInstance(result);
         }
 
-        [HttpGet("{userId:int}")]
+        [HttpGet("{userId:int}"), Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> GetOneUser([FromRoute] int userId)
         {
-            var result = await _userService.GetOneUserDetailAsync(userId);
+            var role = GetUserRole();
+
+            var result = await _userService.GetOneUserDetailAsync(userId,role);
+
+            return CreateActionResultInstance(result);
+        }
+        
+        [HttpDelete("{userId:int}"), Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser([FromRoute] int userId)
+        {
+            var result = await _userService.DeleteOneUserAsync(userId);
 
             return CreateActionResultInstance(result);
         }
