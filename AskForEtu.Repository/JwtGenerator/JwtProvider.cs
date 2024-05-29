@@ -1,6 +1,7 @@
 ﻿using AskForEtu.Core.Entity;
 using AskForEtu.Core.JwtGenerator;
 using AskForEtu.Core.Options;
+using AskForEtu.Core.Services;
 using AskForEtu.Core.Services.Repo;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,14 @@ namespace AskForEtu.Repository.JwtGenerator
     {
         private readonly JwtOptions _options;
         private readonly ITokenRepository _userTokenRepository;
-
+        private readonly IUserRepository _userRepository;
         public JwtProvider(IOptions<JwtOptions> options,
-            ITokenRepository userTokenRepository)
+            ITokenRepository userTokenRepository,
+            IUserRepository userRepository)
         {
             _userTokenRepository = userTokenRepository;
             _options = options.Value;
+            _userRepository=userRepository;
         }
 
         public string Generate(User user)
@@ -70,11 +73,19 @@ namespace AskForEtu.Repository.JwtGenerator
                 var userIdValue = jwtToken.Claims.First(x => x.Type == "usrId").Value;
                 int.TryParse(userIdValue, out var userId);
 
-                var userToken = await _userTokenRepository
-                    .GetByCondition(u => u.UserId == userId, false)
+                var user = await _userRepository
+                    .GetByCondition(u => u.Id == userId, false)
+                    .Include(u => u.Token)
                     .FirstOrDefaultAsync();
 
+                if (user is null) 
+                    return (false, null);
+
+                var userToken = user.Token;
+
                 if (userToken is null) return (false, null);
+
+                if(userToken.AccessToken.Equals(token)) return (false, null);    
 
                 tokenHandler.ValidateToken(userToken.AccessToken, new TokenValidationParameters()
                 {

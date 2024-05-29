@@ -1,6 +1,6 @@
 using AskForEtu.Core.Map;
 using EtuStackOverflow.Extensions;
-using System;
+using MicroBlog.Service.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,6 +89,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<JwtMiddleWare>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
