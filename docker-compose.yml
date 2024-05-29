@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: EtuStackOverflow/Dockerfile
     ports:
-      - "8080:8080"
+      - "443:443"
     restart: always
     depends_on:
       - etusowf-db
