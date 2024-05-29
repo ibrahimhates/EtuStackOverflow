@@ -75,16 +75,16 @@ namespace AskForEtu.Repository.Services
             {
                 var user = await _userRepository.GetByUserOrEmailAsync(loginDto.userNameOrEmail);
 
-                if (user.IsDeleted)
-                {
-                    statusCode = StatusCodes.Status401Unauthorized;
-                    throw new InvalidDataException("Bu kullanıcı banlanmıştır.");
-                }
-
                 if (user is not User)
                 {
                     statusCode = StatusCodes.Status404NotFound;
                     throw new InvalidDataException($"Kullanıcı bulunamadı.");
+                }
+
+                if (user.IsDeleted)
+                {
+                    statusCode = StatusCodes.Status401Unauthorized;
+                    throw new InvalidDataException("Bu kullanıcı banlanmıştır.");
                 }
 
                 if (!_passwordHasher.Verify(user.PasswordHash, loginDto.password))
