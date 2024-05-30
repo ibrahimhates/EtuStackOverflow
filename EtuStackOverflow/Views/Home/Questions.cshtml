@@ -156,14 +156,14 @@
                         <div type="button" v-on:click="changeLocationRoute('/questions/'+question.id)">
                             <div class="d-sm-flex justify-content-between mb-2">
                                 <div>
-                                    <h5 class="mb-sm-0 fw-bold">{{question.title}}</h5>
+                                    <h5 class="mb-sm-0 fw-bold">{{getMinimizeLength(question.title,1)}}</h5>
                                 </div>
                                 <div>
                                     <small class="text-muted ml-3">{{timeSince(question.createdDate)}}</small>
                                 </div>
                             </div>
                             <h7>
-                                {{question.content}}
+                                {{getMinimizeLength(question.content,2)}}
                             </h7>
                         </div>
                         <div class="d-flex justify-content-between">

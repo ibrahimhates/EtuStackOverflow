@@ -222,7 +222,7 @@ namespace AskForEtu.Repository.Context
 
             foreach (var entity in entities)
             {
-                var now = DateTime.Now;
+                var now = DateTime.UtcNow;
 
                 if (entity.State == EntityState.Added)
                 {

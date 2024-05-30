@@ -85,7 +85,7 @@ namespace AskForEtu.Repository.JwtGenerator
 
                 if (userToken is null) return (false, null);
 
-                if(userToken.AccessToken.Equals(token)) return (false, null);    
+                if(!userToken.AccessToken.Equals(token)) return (false, null);    
 
                 tokenHandler.ValidateToken(userToken.AccessToken, new TokenValidationParameters()
                 {

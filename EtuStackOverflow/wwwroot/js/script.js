@@ -245,6 +245,13 @@ new Vue({
         deleteUserEvent(userId) {
             deleteUserByAdmin(this, userId);
         },
+        getMinimizeLength(content, order) {
+            if (order == 1) {
+                return content.length > 50 ? content.substring(0, 50) + '...' : content;
+            } else {
+                return content.length > 75 ? content.substring(0, 75) + '...' : content;
+            }
+        },
         goToPage(page) {
             if (page === '...') return;
             if (page < 1 || page > this.pagging.totalPage) return;
