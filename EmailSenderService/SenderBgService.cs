@@ -43,8 +43,33 @@ namespace EmailSenderService
                 }
                 catch (Exception error)
                 {
-                    _logger.LogError($"[Error] Email gonderme islemi basarisiz: {task.To}");
-                    _logger.LogError(error.Message);
+                    _logger.LogError($"[SendMailError] Email gonderme islemi basarisiz: {task.To}");
+                    _logger.LogError($"[SendMailErrorDetail] Mail:{task.To}" +
+                                    $"\n\t[Description] {error.Message}" +
+                                    (error.InnerException != null ? $"\n\t{error.InnerException}" : ""));
+                    if (task.SendType == SendType.VerifyEmail)
+                    {
+                        if (task.RetryCount > 0)
+                        {
+                            _logger.LogInformation($"[SendMailError-Retry] Email gonderme islemi tekrarlandı: {task.To}");
+                            task.RetryCount--;
+                            await _queue.AddQueue(task);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                await _sender.SendAdminHasErrorAsync(task.To, error.Message);
+                            }
+                            catch (Exception inner)
+                            {
+                                _logger.LogError("[SendMailToAdminError] Admin Mail Gonderme Islemi Basarisiz");
+                                _logger.LogError(inner.Message);
+                                continue;
+                            }
+                        }
+                    }
+
                 }
             }
         }

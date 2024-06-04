@@ -252,12 +252,22 @@ new Vue({
                 return content.length > 75 ? content.substring(0, 75) + '...' : content;
             }
         },
-        goToPage(page) {
+        goToPageQuestion(page) {
             if (page === '...') return;
             if (page < 1 || page > this.pagging.totalPage) return;
             this.pagging.currentPage = page;
             this.isLoading = true;
             getAllQuestionWithPage(this)
+                .then(() => this.isLoading = false)
+                .catch(() => this.isLoading = false)
+        },
+        goToPageUser(page) {
+            if (page === '...') return;
+            if (page < 1 || page > this.pagging.totalPage) return;
+            this.pagging.currentPage = page;
+            this.userList = [];
+            this.isLoading = true;
+            getAllUsers(this)
                 .then(() => this.isLoading = false)
                 .catch(() => this.isLoading = false)
         },
@@ -271,19 +281,11 @@ new Vue({
                 .then(() => this.isLoading = false)
                 .catch(() => this.isLoading = false)
         },
-        getDataForQuestion(userId) {
-            axios.get(`/api/Questions/allForUser/${userId}`)
-                .then(response => {
-                    this.profileQuestionData = response.data;
-                })
-                .catch(error => console.error('Birseyler ters gitti '));
-        },
-        getDataForInteraction(userId) {
-            axios.get(`/api/Questions/interactions/${userId}`)
-                .then(response => {
-                    this.profileInteractionData = response.data;
-                })
-                .catch(error => console.error('Birseyler ters gitti '));
+        getAllQuestionssEvent() {
+            this.isLoading = true;
+            getAllQuestionWithPage(this)
+                .then(() => this.isLoading = false)
+                .catch(() => this.isLoading = false)
         },
         timeSince(date) {
             return moment(date).fromNow();

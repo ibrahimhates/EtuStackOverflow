@@ -16,7 +16,8 @@ namespace EmailSenderService.EmailService
             _client = new SmtpClient(_options.Host, _options.Port)
             {
                 EnableSsl = true,
-                Credentials = new NetworkCredential(_options.From, _options.Psw)
+                Credentials = new NetworkCredential(_options.From, _options.Psw),
+                Timeout = 25000
             };
         }
         public Task SendMailVerifyAsync(string toEmail, string resetLink)
@@ -44,6 +45,18 @@ namespace EmailSenderService.EmailService
                     $"Below is the verification code you need to use for the password reset process:" +
                     $"\n\nYour single-use verification code: [{resetCode}]" +
                     $"\n\nReferans Code: {refCode}"));
+        }
+
+        public Task SendAdminHasErrorAsync(string toEmail, string resetLink)
+        {
+            return _client.SendMailAsync(
+                new MailMessage(
+                    from: _options.From,
+                    to: _options.From,
+                    "Email Verification Link",
+                    $"This mail should be sent to: {toEmail}.\n " +
+                    $"You can use the following verification link to verify your account:" +
+                    $"\n\nYour single-use verification Link: {resetLink}"));
         }
     }
 }

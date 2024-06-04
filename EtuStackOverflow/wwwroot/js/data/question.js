@@ -3,7 +3,7 @@ import { getCookie, deleteCookie } from '../cookieManager.js';
 export const getAllQuestionWithPage = async (app) => {
     app.questions = [];
     try {
-        const response = await axios.get(`/api/questions?pageNumber=${app.pagging.currentPage}`);
+        const response = await axios.get(`/api/questions?pageNumber=${app.pagging.currentPage}&&searchTerm=${app.searchTerm}`);
         app.questions = response.data.data;
         app.pagging = response.data.pagination;
     } catch (error) {
