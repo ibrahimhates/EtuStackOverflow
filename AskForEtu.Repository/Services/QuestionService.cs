@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.Xml;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace AskForEtu.Repository.Services;
 public class QuestionService : IQuestionService
@@ -68,7 +69,7 @@ public class QuestionService : IQuestionService
         }
     }
 
-    public async Task<Response<NoContent>> DeleteQuestionAsync(long id,int userId)
+    public async Task<Response<NoContent>> DeleteQuestionAsync(long id, int userId)
     {
         try
         {
@@ -79,7 +80,7 @@ public class QuestionService : IQuestionService
                 throw new InvalidDataException("Soru bulunamadı");
             }
 
-            if(deletedQuestion.UserId != userId)
+            if (deletedQuestion.UserId != userId)
             {
                 throw new InvalidDataException("Bu işlemi yapmaya yetkiniz yok");
             }
@@ -140,7 +141,7 @@ public class QuestionService : IQuestionService
         }
     }
 
-    public async Task<Response<List<QuestionListDto>>> GetAllQuestionWithPaggingAsync(int pageNumber)
+    public async Task<Response<List<QuestionListDto>>> GetAllQuestionWithPaggingAsync(int pageNumber, string? searchTerm)
     {
         try
         {
@@ -152,8 +153,17 @@ public class QuestionService : IQuestionService
                 CurrentPage = pageNumber,
             };
 
-            var questions = await _questionRepository
-                .GetAll(false)
+            var query = _questionRepository
+                    .GetAll(false);
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(x => x.Content.Contains(searchTerm)
+                || x.Title.Contains(searchTerm)
+                || x.User.UserName.Contains(searchTerm));
+            }
+
+            var questions = await query
                 .ToPagging(pageNumber, pagger.PageSize)
                 .OrderByDescending(x => x.CreatedDate)
                 .Include(x => x.User)

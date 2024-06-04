@@ -19,9 +19,9 @@ namespace EtuStackOverflow.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<IActionResult> AllQuestionsAsync([FromQuery]int pageNumber)
+        public async Task<IActionResult> AllQuestionsAsync([FromQuery]int pageNumber, [FromQuery] string? searchTerm)
         {
-            var result = await _questionService.GetAllQuestionWithPaggingAsync(pageNumber);
+            var result = await _questionService.GetAllQuestionWithPaggingAsync(pageNumber,searchTerm);
 
             return CreateActionResultInstance(result);
         }
@@ -69,13 +69,5 @@ namespace EtuStackOverflow.Controllers.Api
 
             return CreateActionResultInstance(result);
         }
-
-        [HttpGet("interactions/{id:int}")]
-        public IActionResult AllInteractionForUser(int id)
-        {
-
-            return Ok();
-        }
-
     }
 }

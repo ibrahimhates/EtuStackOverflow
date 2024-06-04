@@ -7,5 +7,6 @@ namespace AskForEtu.Core.Dto.Mail
         public string To { get; init; }
         public string Content { get; init; }
         public SendType SendType { get; init; }
+        public int RetryCount { get; set; } = 3;
     }
 }
