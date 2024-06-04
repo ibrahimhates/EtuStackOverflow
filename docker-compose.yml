@@ -9,10 +9,6 @@ services:
     ports:
       - "8080:8080"
     restart: always
-    depends_on:
-      - etusowf-db
-    networks:
-      - etu
 
   etusowf-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -23,13 +19,8 @@ services:
     ports:
       - "1433:1433"
     restart: always
-    networks:
-      - etu
     volumes:
       - mssqldata:/var/opt/mssql
-
-networks:
-  etu:
 
 volumes:
   mssqldata:
