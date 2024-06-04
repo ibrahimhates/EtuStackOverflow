@@ -8,7 +8,7 @@ namespace AskForEtu.Core.Services
 {
     public interface IAuthService
     {
-        Task<Response<TokenDto>> LoginAsync(LoginDto loginDto);
+        Task<Response<TokenDto>> LoginAsync(LoginDto loginDto,HttpContext context);
         Task<Response<NoContent>> RegisterAsync(RegisterDto registerDto, HttpContext context);
         Task<Response<UserIdPwdResetDto>> ForgetPasswordAsync(ForgetPasswordDto forgetPasswordDto);
         Task<Response<string>> ForgetPasswordVerifyCodeAsync(ForgetPasswordWithCodeDto _resetWithCodeDto);

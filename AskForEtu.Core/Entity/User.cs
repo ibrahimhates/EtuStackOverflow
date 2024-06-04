@@ -18,9 +18,10 @@ namespace AskForEtu.Core.Entity
         public byte[]? ProfilePhoto { get; set; }
         public string Email { get; set; }
         public bool VerifyEmail { get; set; }
-        public string? VerifyEmailToken { get; set; }
+        public string VerifyEmailToken { get; set; }
         public Faculty Faculty { get; set; }
         public Major Major { get; set; }
+        public DateTime? LastSendEmailDate { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Report> Reports{ get; set; }
         public ICollection<Question> Questions { get; set; }

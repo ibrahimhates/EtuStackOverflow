@@ -386,6 +386,9 @@ namespace AskForEtu.Repository.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastSendEmailDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte>("MajorId")
                         .HasColumnType("tinyint");
 
@@ -415,6 +418,7 @@ namespace AskForEtu.Repository.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("VerifyEmailToken")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -461,7 +465,7 @@ namespace AskForEtu.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRole");
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("AskForEtu.Core.Entity.Comment", b =>

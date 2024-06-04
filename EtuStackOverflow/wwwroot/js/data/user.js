@@ -117,7 +117,6 @@ export const getAllUsers = async (app) => {
 function fillEditProfile(app) {
     app.userProfileDetailEdit.name = app.userProfileDetail.name;
     app.userProfileDetailEdit.surName = app.userProfileDetail.surName;
-    app.userProfileDetailEdit.dateOfBirth = app.userProfileDetail.dateOfBirth;
     app.userProfileDetailEdit.profilePhoto = app.userProfileDetail.profilePhoto;
     app.userProfileDetailEdit.userName = app.userProfileDetail.userName;
 }

@@ -22,6 +22,7 @@ namespace AskForEtu.Repository.Context
         DbSet<Faculty> Faculties { get; set; }
         DbSet<Report> Reports { get; set; }
         DbSet<Role> Roles { get; set; }
+        DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

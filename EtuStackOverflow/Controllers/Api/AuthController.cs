@@ -21,7 +21,7 @@ namespace EtuStackOverflow.Controllers.Api
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            var result = await _authService.LoginAsync(loginDto);
+            var result = await _authService.LoginAsync(loginDto,HttpContext);
 
             return CreateActionResultInstance(result);
         }

@@ -68,7 +68,7 @@ namespace AskForEtu.Repository.Services
             _roleRepository=roleRepository;
         }
 
-        public async Task<Response<TokenDto>> LoginAsync(LoginDto loginDto)
+        public async Task<Response<TokenDto>> LoginAsync(LoginDto loginDto, HttpContext context)
         {
             int statusCode = StatusCodes.Status200OK;
             try
@@ -95,6 +95,20 @@ namespace AskForEtu.Repository.Services
 
                 if (!user.VerifyEmail)
                 {
+                    if (user.LastSendEmailDate.Value < DateTime.UtcNow)
+                    {
+                        statusCode = StatusCodes.Status401Unauthorized;
+                        var emailVerifyToken = user.VerifyEmailToken;
+                        user.LastSendEmailDate = DateTime.UtcNow.AddMinutes(5);
+
+                        _userRepository.Update(user);
+                        await _unitOfWork.SaveAsync();
+
+                        await SendMail(emailVerifyToken, context, user);
+
+                        throw new InvalidDataException("Email doğrulaması yapılmadı. Doğrulama linki tekrar gönderildi. Lütfen email adresinizi doğrulayın.");
+                    }
+
                     statusCode = StatusCodes.Status401Unauthorized;
                     throw new InvalidDataException("Email doğrulaması yapılmadı. Lütfen email adresinizi doğrulayın.");
                 }
@@ -157,7 +171,7 @@ namespace AskForEtu.Repository.Services
 
                 if (userIsExistWithEmail is not null)
                 {
-                    if(userIsExistWithEmail.IsDeleted)
+                    if (userIsExistWithEmail.IsDeleted)
                         throw new InvalidDataException("Bu email adresi banlanmıştır!");
 
                     throw new InvalidDataException("Email adresi zaten kullanılıyor!");
@@ -190,28 +204,16 @@ namespace AskForEtu.Repository.Services
 
                 var emailVerifyToken = Guid.NewGuid().ToString();
                 user.VerifyEmailToken = emailVerifyToken;
+                user.LastSendEmailDate = DateTime.UtcNow.AddMinutes(5);
 
-                var confirmationLink = GenerateLink(emailVerifyToken, context);
 
                 await _userRepository.CreateAsync(user);
 
                 await _unitOfWork.SaveAsync();
 
-                try
-                {
-                    var template = new EmailSendTemplate()
-                    {
-                        To = user.Email,
-                        Content = confirmationLink,
-                        SendType = SendType.VerifyEmail
-                    };
+                var confirmationLink = GenerateLink(emailVerifyToken, context);
 
-                    await _queue.AddQueue(template);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+                await SendMail(emailVerifyToken, context, user);
 
                 return Response<NoContent>.Success("Kayit olma islemi tamamlandi", 202);
             }
@@ -518,6 +520,31 @@ namespace AskForEtu.Repository.Services
                 _logger.LogError(err.Message);
                 return Response<NoContent>
                     .Fail("Birseyler ters gitti.", 500);
+            }
+        }
+
+        private async Task SendMail(string emailVerifyToken, HttpContext context, User user)
+        {
+            var confirmationLink = GenerateLink(emailVerifyToken, context);
+
+            await _userRepository.CreateAsync(user);
+
+            await _unitOfWork.SaveAsync();
+
+            try
+            {
+                var template = new EmailSendTemplate()
+                {
+                    To = user.Email,
+                    Content = confirmationLink,
+                    SendType = SendType.VerifyEmail
+                };
+
+                await _queue.AddQueue(template);
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
