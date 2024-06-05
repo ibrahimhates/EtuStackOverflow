@@ -90,7 +90,7 @@ namespace AskForEtu.Repository.Services
                 if (!_passwordHasher.Verify(user.PasswordHash, loginDto.password))
                 {
                     statusCode = StatusCodes.Status401Unauthorized;
-                    throw new InvalidDataException($"Kullanıcı adı ya da şifre hatalı. {user.Email}");
+                    throw new InvalidDataException($"Kullanıcı adı ya da şifre hatalı.; {user.Email}");
                 }
 
                 if (!user.VerifyEmail)
@@ -139,7 +139,7 @@ namespace AskForEtu.Repository.Services
             {
                 _logger.LogWarning(err.Message);
                 return Response<TokenDto>
-                    .Fail(err.Message.Split(".")[0], statusCode);
+                    .Fail(err.Message.Split(";")[0], statusCode);
             }
             catch (Exception err)
             {
