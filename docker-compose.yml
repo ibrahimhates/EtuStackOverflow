@@ -1,26 +1,11 @@
 version: '3.4'
 
 services:
-  etustackoverflow:
-    image: ${DOCKER_REGISTRY-}etustackoverflow
+  c_askforetuapp:
+    image: ${DOCKER_REGISTRY-}askforetu
     build:
       context: .
       dockerfile: EtuStackOverflow/Dockerfile
     ports:
-      - "8080:8080"
+      - "5004:5004"
     restart: always
-
-  etusowf-db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: etusowf-db
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "P@ssw0rd"
-    ports:
-      - "1433:1433"
-    restart: always
-    volumes:
-      - mssqldata:/var/opt/mssql
-
-volumes:
-  mssqldata:

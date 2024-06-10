@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  etusowf-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: etusowf-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "P@ssw0rd"
+    ports:
+      - "1433:1433"
+    restart: always
+    volumes:
+      - mssqldata:/var/opt/mssql
+
+volumes:
+  mssqldata:
