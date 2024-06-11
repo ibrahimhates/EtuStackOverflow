@@ -75,7 +75,6 @@ if (environment == "Development" || string.IsNullOrEmpty(environment))
 
 app.AddMigration();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
