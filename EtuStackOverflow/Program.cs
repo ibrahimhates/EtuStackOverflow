@@ -41,7 +41,6 @@ else
 
 }
 
-
 // Add services to the container.
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
