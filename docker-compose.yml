@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   c_askforetuapp:
-    image: ${DOCKER_REGISTRY-}askforetu
+    image: askforetu
     build:
       context: .
       dockerfile: EtuStackOverflow/Dockerfile
